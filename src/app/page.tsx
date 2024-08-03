@@ -1,4 +1,5 @@
 'use client';
+import CicleProgressBar from '@/components/custom/CircleProgressBar';
 import DraggableCard from '@/components/custom/DraggableCard';
 import React, { useState } from 'react';
 import { DndProvider } from 'react-dnd';
@@ -7,6 +8,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 export default function Home() {
   return (
     <main className="p-24">
+      <CicleProgressBar />
       <Dashboard />
     </main>
   );
