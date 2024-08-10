@@ -3,7 +3,7 @@ import { Inter as FontSans } from 'next/font/google';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/components/theme-provider';
-import { ModeToggle } from '@/components/custom/ModeToggle';
+import Navbar from '@/components/custom/Navbar';
 
 const fontSans = FontSans({
   subsets: ['latin'],
@@ -34,11 +34,8 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className='h-16 p-3 flex justify-between items-center border-b border-gray-600'>
-            <div>Web?</div>
-            <ModeToggle />
-          </div>
-          {children}
+          <Navbar />
+          <div className="px-24">{children}</div>
         </ThemeProvider>
       </body>
     </html>
