@@ -35,7 +35,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        {defaultCards.map((card) => (
+        {cards.map((card) => (
           <DraggableCard
             className={card.className}
             key={card.id}
