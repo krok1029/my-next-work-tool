@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { PrismaTodoRepository } from '@/infrastructure/prisma/TodoRepositoryImpl';
+import { TodoService } from '@/application/todo/TodoService';
 import { z } from 'zod';
-import { cleanObject } from '@/lib/utils';
-
-const prisma = new PrismaClient();
 
 const todoValidator = z.object({
   title: z.string().optional(),
@@ -15,29 +13,35 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   const { id } = params;
+  const json = await req.json();
+
+  const parsed = todoValidator.safeParse(json);
+  if (!parsed.success) {
+    return NextResponse.json({ message: parsed.error.issues }, { status: 400 });
+  }
+
+  const todoRepository = new PrismaTodoRepository();
+  const todoService = new TodoService(todoRepository);
 
   try {
-    const json = await req.json();
-    const parsed = todoValidator.safeParse(json);
+    const { title, completed } = parsed.data;
 
-    if (!parsed.success) {
-      return NextResponse.json(
-        { message: parsed.error.issues },
-        { status: 400 }
-      );
+    if (completed !== undefined) {
+      await todoService.completeTodo(Number(id));
     }
-    const cleanedData = cleanObject(parsed.data);
 
-    const updatedTodo = await prisma.todo.update({
-      where: { id: Number(id) },
-      data: cleanedData,
-    });
+    if (title) {
+      await todoService.renameTodo(Number(id), title);
+    }
 
-    return NextResponse.json(updatedTodo, { status: 200 });
-  } catch (error) {
-    console.error('Failed to update todo:', error);
     return NextResponse.json(
-      { message: 'An unexpected error occurred' },
+      { message: 'Todo updated successfully' },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { message: 'Failed to update todo' },
       { status: 500 }
     );
   }
