@@ -3,7 +3,7 @@ import React from 'react';
 import ClientDashboard from '@/components/ClientDashboard';
 import Todos from '@/components/todos/Todos';
 
-export const defaultCards = [
+const defaultCards = [
   {
     id: 1,
     text: 'CountdownTimer',

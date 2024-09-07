@@ -59,7 +59,7 @@ const TodoItem = ({ todo }: { todo: Todo }) => {
   };
 
   return (
-    <Card className="col-span-2">
+    <Card className="my-3">
       <CardContent className="flex justify-between items-center py-4">
         <div className="flex w-full items-center space-x-2">
           <Input
