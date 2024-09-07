@@ -28,8 +28,16 @@ yarn-error.log*
 # local env files
 .env*.local
 .env
+.env.production
 # vercel
 .vercel
+# SQLite database files
+prisma/dev/dev.db
+prisma/dev/dev.db-journal
+
+# Ignore local migrations (if you don't want to share development migrations)
+prisma/dev/migrations/
+
 
 # typescript
 *.tsbuildinfo

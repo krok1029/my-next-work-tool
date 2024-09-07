@@ -3,10 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "bun --bun run next dev",
-    "build": "bun --bun run next build",
-    "start": "bun --bun run next start",
-    "lint": "bun --bun run next lint"
+    "dev": "bunx prisma generate --schema=prisma/dev/schema.prisma && bun --bun run next dev",
+    "build": "bunx prisma generate --schema=prisma/production/schema.prisma && bun run next build",
+    "start": "dotenv -e .env.production bun run next start",
+    "lint": "bun --bun run next lint",
+    "migrate:dev": "bun x prisma migrate dev --schema=prisma/dev/schema.prisma --name init",
+    "migrate:prod": "dotenv -e .env.production -- bunx prisma migrate deploy --schema=prisma/production/schema.prisma"
   },
   "dependencies": {
     "@prisma/client": "^5.18.0",
@@ -14,6 +16,8 @@
     "@radix-ui/react-slot": "^1.1.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "dotenv": "^16.4.5",
+    "dotenv-cli": "^7.4.2",
     "lodash": "^4.17.21",
     "lucide-react": "^0.435.0",
     "next": "14.2.5",
