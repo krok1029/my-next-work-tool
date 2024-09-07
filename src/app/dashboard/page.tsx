@@ -1,7 +1,7 @@
 import CountdownTimer from '@/components/custom/CountdownTimer';
 import React from 'react';
-import ClientDashboard from './ClientDashboard';
-import Todos from './Todos';
+import ClientDashboard from '@/components/ClientDashboard';
+import Todos from '@/components/todos/Todos';
 
 export const defaultCards = [
   {
