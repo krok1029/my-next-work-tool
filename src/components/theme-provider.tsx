@@ -1,9 +1,13 @@
-'use client';
-
-import * as React from 'react';
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
-import { type ThemeProviderProps } from 'next-themes/dist/types';
 
-export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
-  return <NextThemesProvider {...props}>{children}</NextThemesProvider>;
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  return (
+    <NextThemesProvider
+      attribute="class" // 確保主題通過 class 切換，避免 style 屬性上的變化
+      defaultTheme="system"
+      enableSystem
+    >
+      {children}
+    </NextThemesProvider>
+  );
 }

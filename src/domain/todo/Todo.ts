@@ -12,6 +12,13 @@ export class Todo {
     this.completed = true;
   }
 
+  markIncomplete() {
+    if (!this.completed) {
+      throw new Error('Todo is not completed yet');
+    }
+    this.completed = false;
+  }
+
   rename(newTitle: string) {
     if (!newTitle.trim()) {
       throw new Error('Title cannot be empty');

@@ -11,13 +11,15 @@ const TodoItem = ({ todo }: { todo: Todo }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(title);
   const [isCompleted, setIsCompleted] = useState(completed);
+  const [isSaving, setIsSaving] = useState(false); // 防止重複提交的加載狀態
 
   const saveTodo = async (
     updatedFields: Partial<{ title: string; completed: boolean }>
   ) => {
+    setIsSaving(true); // 開始保存，設置加載狀態
     try {
       const response = await fetch(`/api/todos/${id}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -26,6 +28,7 @@ const TodoItem = ({ todo }: { todo: Todo }) => {
 
       if (response.ok) {
         const updatedTodo = await response.json();
+        console.log('Updated Todo:', updatedTodo);
         setEditedTitle(updatedTodo.title);
         setIsCompleted(updatedTodo.completed);
         setIsEditing(false);
@@ -34,20 +37,24 @@ const TodoItem = ({ todo }: { todo: Todo }) => {
       }
     } catch (error) {
       console.error('Error:', error);
+    } finally {
+      setIsSaving(false); // 保存完成，取消加載狀態
     }
   };
 
   const handleSave = () => {
-    saveTodo({
-      title: editedTitle,
-      completed: isCompleted,
-    });
+    if (!isSaving && editedTitle !== title) {
+      // 僅當 title 有更改時保存
+      saveTodo({ title: editedTitle });
+    }
   };
 
   const toggleCompleted = () => {
-    const newCompletedStatus = !isCompleted;
-    setIsCompleted(newCompletedStatus);
-    saveTodo({ completed: newCompletedStatus });
+    if (!isSaving) {
+      const newCompletedStatus = !isCompleted;
+      setIsCompleted(newCompletedStatus); // 本地樂觀更新狀態
+      saveTodo({ completed: newCompletedStatus });
+    }
   };
 
   return (
@@ -58,7 +65,8 @@ const TodoItem = ({ todo }: { todo: Todo }) => {
             className="w-fit"
             type="checkbox"
             checked={isCompleted}
-            onChange={toggleCompleted} // 當復選框狀態改變時，立即更新資料庫
+            onChange={toggleCompleted} // 當復選框狀態改變時，更新資料庫
+            disabled={isSaving} // 如果正在保存，禁用操作
           />
           {isEditing ? (
             <Input
@@ -67,10 +75,11 @@ const TodoItem = ({ todo }: { todo: Todo }) => {
               onChange={(e) => setEditedTitle(e.target.value)}
               onKeyPress={(e) => {
                 if (e.key === 'Enter') {
-                  handleSave();
+                  handleSave(); // 用戶按下回車鍵時保存編輯
                 }
               }}
               className="border border-gray-300 rounded-md"
+              disabled={isSaving} // 如果正在保存，禁用操作
             />
           ) : (
             <span className={`grow ${isCompleted ? 'line-through' : ''}`}>
@@ -81,14 +90,17 @@ const TodoItem = ({ todo }: { todo: Todo }) => {
             variant="outline"
             size="sm"
             onClick={() => {
-              if (isEditing) {
-                handleSave();
-              } else {
-                setIsEditing(true);
+              if (!isSaving) {
+                if (isEditing) {
+                  handleSave(); // 當處於編輯模式時保存
+                } else {
+                  setIsEditing(true); // 否則進入編輯模式
+                }
               }
             }}
+            disabled={isSaving} // 如果正在保存，禁用按鈕
           >
-            {isEditing ? 'Save' : 'Edit'}
+            {isSaving ? 'Saving...' : isEditing ? 'Save' : 'Edit'}
           </Button>
         </div>
       </CardContent>
