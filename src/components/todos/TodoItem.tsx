@@ -1,10 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { Todo } from '@prisma/client';
+
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Todo } from '@/domain/todo/Todo';
 
 const TodoItem = ({ todo }: { todo: Todo }) => {
   const { id, title, completed } = todo;

@@ -1,43 +1,48 @@
 'use client';
 
 import { useState } from 'react';
-import { Todo } from '@prisma/client';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 
-const NewTodos = () => {
+const NewTodos = ({ onTodoCreated }: { onTodoCreated: () => void }) => {
   const [editedTitle, setEditedTitle] = useState('');
-  const [isCompleted, setIsCompleted] = useState(false);
+  const [isSaving, setIsSaving] = useState(false); // 用於防止重複提交和顯示加載狀態
 
   const saveTodo = async (
     updatedFields: Partial<{ title: string; completed: boolean }>
   ) => {
+    setIsSaving(true); // 開始保存，設置加載狀態
     try {
-      // const response = await fetch(`/api/todos/${id}`, {
-      //   method: 'PUT',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify(updatedFields),
-      // });
-      // if (response.ok) {
-      //   const updatedTodo = await response.json();
-      //   setEditedTitle(updatedTodo.title);
-      //   setIsCompleted(updatedTodo.completed);
-      //   setIsEditing(false);
-      // } else {
-      //   console.error('Failed to update todo');
-      // }
+      const response = await fetch(`/api/todos`, {
+        method: 'POST', // POST 用於創建新資源
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedFields),
+      });
+
+      if (response.ok) {
+        const newTodo = await response.json();
+        console.log('New Todo created:', newTodo);
+        setEditedTitle(''); // 重置輸入框
+        onTodoCreated();
+      } else {
+        console.error('Failed to create todo');
+      }
     } catch (error) {
       console.error('Error:', error);
+    } finally {
+      setIsSaving(false); // 完成保存，取消加載狀態
     }
   };
 
   const handleSave = () => {
+    if (!editedTitle.trim()) {
+      console.error('Title cannot be empty');
+      return;
+    }
     saveTodo({
       title: editedTitle,
-      completed: isCompleted,
     });
   };
 
@@ -53,15 +58,15 @@ const NewTodos = () => {
           }
         }}
         className="border rounded-md"
+        disabled={isSaving} // 當正在保存時禁用輸入
       />
       <Button
         variant="outline"
         size="sm"
-        onClick={() => {
-          handleSave();
-        }}
+        onClick={handleSave}
+        disabled={isSaving} // 當正在保存時禁用按鈕
       >
-        {'Create'}
+        {isSaving ? 'Creating...' : 'Create'}
       </Button>
     </div>
   );
