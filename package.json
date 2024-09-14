@@ -3,12 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "bunx prisma generate --schema=prisma/dev/schema.prisma && bun --bun run next dev",
-    "build": "bunx prisma generate --schema=prisma/production/schema.prisma && bun run next build",
+    "dev": "bunx prisma generate && bun --bun run next dev",
+    "build": "bunx prisma generate && bun run next build",
     "start": "dotenv -e .env.production bun run next start",
     "lint": "bun --bun run next lint",
-    "migrate:dev": "bun x prisma migrate dev --schema=prisma/dev/schema.prisma --name init",
-    "migrate:prod": "dotenv -e .env.production -- bunx prisma migrate deploy --schema=prisma/production/schema.prisma"
+    "migrate:dev": "bunx prisma migrate dev --name init",
+    "migrate:prod": "dotenv -e .env.production -- bunx prisma migrate deploy"
   },
   "dependencies": {
     "@prisma/client": "^5.18.0",

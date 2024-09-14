@@ -8,7 +8,6 @@ import { Todo } from '@/domain/todo/Todo';
 
 const Todos = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
-
   const fetchTodos = async () => {
     try {
       const response = await fetch('/api/todos'); // 調用 API 路由
