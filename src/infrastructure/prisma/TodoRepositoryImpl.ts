@@ -1,9 +1,7 @@
 // infrastructure/prisma/TodoRepositoryImpl.ts
-import { PrismaClient } from '@prisma/client';
+import prisma from './PrismaClient';
 import { TodoRepository } from '@/domain/todo/TodoRepository';
 import { Todo } from '@/domain/todo/Todo';
-
-const prisma = new PrismaClient();
 
 export class PrismaTodoRepository implements TodoRepository {
   async findById(id: number): Promise<Todo | null> {
