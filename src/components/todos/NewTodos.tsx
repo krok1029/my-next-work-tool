@@ -9,7 +9,11 @@ const NewTodos = ({ onTodoCreated }: { onTodoCreated: () => void }) => {
   const [isSaving, setIsSaving] = useState(false); // 用於防止重複提交和顯示加載狀態
 
   const saveTodo = async (
-    updatedFields: Partial<{ title: string; completed: boolean }>
+    updatedFields: Partial<{
+      title: string;
+      userId: number;
+      completed: boolean;
+    }>
   ) => {
     setIsSaving(true); // 開始保存，設置加載狀態
     try {
@@ -43,6 +47,7 @@ const NewTodos = ({ onTodoCreated }: { onTodoCreated: () => void }) => {
     }
     saveTodo({
       title: editedTitle,
+      userId: 1, // 假設用戶 ID 為 1，根據實際情況調整
     });
   };
 

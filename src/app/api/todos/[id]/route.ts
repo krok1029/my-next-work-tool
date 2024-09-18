@@ -1,7 +1,9 @@
+import 'reflect-metadata';
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaTodoRepository } from '@/infrastructure/prisma/TodoRepositoryImpl';
-import { TodoService } from '@/application/todo/TodoService';
 import { z } from 'zod';
+import { container } from 'tsyringe';
+import { UpdateTodoUseCase } from '@/application/todo/UpdateTodoUseCase';
+import { GetTodoUseCase } from '@/application/todo/GetTodoUseCase';
 
 // 使用 Zod 進行數據驗證，要求至少有一個字段
 const putTodoValidator = z
@@ -13,11 +15,6 @@ const putTodoValidator = z
     message: 'No valid fields to update', // 自定義錯誤消息
     path: [], // 將錯誤附加到整個數據體上
   });
-// 使用 Zod 進行數據驗證，確保 title 和 completed 是有效的
-const postTodoValidator = z.object({
-  title: z.string().min(1, { message: "Title can't be empty" }), // title 是必填且不能為空
-  completed: z.boolean().optional(), // completed 是可選的
-});
 
 export async function PATCH(
   req: NextRequest,
@@ -40,16 +37,12 @@ export async function PATCH(
 
     // 提取已驗證的數據
     const { title, completed } = parsed.data;
+    const updateTodoUseCase = container.resolve(UpdateTodoUseCase);
+    await updateTodoUseCase.execute(Number(id), { title, completed });
 
-    // 初始化倉儲和服務
-    const todoRepository = new PrismaTodoRepository();
-    const todoService = new TodoService(todoRepository);
+    const getTodoUseCase = container.resolve(GetTodoUseCase);
+    const updatedTodo = await getTodoUseCase.execute(Number(id));
 
-    // 使用單一更新邏輯來處理 title 和 completed 的更新
-    await todoService.updateTodo(Number(id), { title, completed });
-
-    // 返回更新後的 Todo 數據
-    const updatedTodo = await todoRepository.findById(Number(id));
     return NextResponse.json(updatedTodo, { status: 200 });
   } catch (error) {
     console.error(error);

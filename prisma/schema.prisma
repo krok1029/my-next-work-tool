@@ -11,9 +11,22 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  name         String
+  workDuration Int      @default(25)  // 用戶的番茄鐘工作時間，默認25分鐘
+  breakDuration Int     @default(5)   // 用戶的番茄鐘休息時間，默認5分鐘
+  todos        Todo[]   // 關聯用戶的待辦事項
+}
+
 model Todo {
-  id        Int      @id @default(autoincrement())
-  title     String
-  completed Boolean  @default(false)
-  createdAt DateTime @default(now())
+  id                 Int      @id @default(autoincrement())
+  title              String
+  completed          Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  totalPomodoros     Int      @default(1)
+  completedPomodoros Int      @default(0)
+  userId             Int      // 外鍵，關聯用戶的ID
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade) // 建立與 User 的關聯
 }

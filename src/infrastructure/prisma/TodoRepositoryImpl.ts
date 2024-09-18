@@ -2,7 +2,10 @@
 import prisma from './PrismaClient';
 import { TodoRepository } from '@/domain/todo/TodoRepository';
 import { Todo } from '@/domain/todo/Todo';
+import { injectable } from 'tsyringe';
+import 'reflect-metadata';
 
+@injectable()
 export class PrismaTodoRepository implements TodoRepository {
   async findById(id: number): Promise<Todo | null> {
     const todoData = await prisma.todo.findUnique({ where: { id } });
@@ -28,11 +31,14 @@ export class PrismaTodoRepository implements TodoRepository {
       },
     });
   }
-  async create(data: { title: string }): Promise<Todo> {
+  async create(data: { title: string; userId: number }): Promise<Todo> {
     const todoData = await prisma.todo.create({
       data: {
         title: data.title,
-        completed: false, // 每次創建時，completed 都默認為 false
+        completed: false, // 默認為未完成
+        totalPomodoros: 1, // 默認需要 1 個番茄鐘
+        completedPomodoros: 0, // 默認完成 0 個番茄鐘
+        userId: data.userId, // 關聯到 User
       },
     });
 
