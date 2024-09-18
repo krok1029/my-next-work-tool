@@ -36,9 +36,8 @@ export async function PATCH(
     }
 
     // 提取已驗證的數據
-    const { title, completed } = parsed.data;
     const updateTodoUseCase = container.resolve(UpdateTodoUseCase);
-    await updateTodoUseCase.execute(Number(id), { title, completed });
+    await updateTodoUseCase.execute(Number(id), parsed.data);
 
     const getTodoUseCase = container.resolve(GetTodoUseCase);
     const updatedTodo = await getTodoUseCase.execute(Number(id));
