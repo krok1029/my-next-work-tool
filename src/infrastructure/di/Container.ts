@@ -7,23 +7,29 @@ import { UpdateTodoUseCase } from '@/application/todo/UpdateTodoUseCase';
 import { GetAllTodosUseCase } from '@/application/todo/GetAllTodosUseCase';
 import { GetTodoUseCase } from '@/application/todo/GetTodoUseCase';
 import { TodoRepository } from '@/domain/todo/TodoRepository';
+import { SignInUserUseCase } from '@/application/user/SignInUserUseCase';
+import { SupabaseAuthService } from '@/infrastructure/auth/SupabaseAuthService';
+import { AUTH, TODO } from '@/infrastructure/di/DependencyInjectionTokens';
 
 console.log('Container initialized');
-// 註冊依賴
-container.register<TodoRepository>('TodoRepository', {
+
+// 註冊 Todo
+container.register<TodoRepository>(TODO.Repo, {
   useClass: PrismaTodoRepository,
 });
-
-// 如果需要註冊 Use Case，也可以這樣做
-container.register('CreateTodoUseCase', {
+container.register(TODO.Create, {
   useClass: CreateTodoUseCase,
 });
-container.register('UpdateTodoUseCase', {
+container.register(TODO.Update, {
   useClass: UpdateTodoUseCase,
 });
-container.register('GetAllTodosUseCase', {
+container.register(TODO.GetAll, {
   useClass: GetAllTodosUseCase,
 });
-container.register('GetTodoUseCase', {
+container.register(TODO.Get, {
   useClass: GetTodoUseCase,
 });
+
+// 註冊 Auth
+container.registerSingleton(AUTH.Service, SupabaseAuthService);
+container.registerSingleton(AUTH.SignIn, SignInUserUseCase);

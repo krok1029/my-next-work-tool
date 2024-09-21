@@ -1,14 +1,16 @@
 // application/todo/UpdateTodoUseCase.ts
 import type { TodoRepository } from '@/domain/todo/TodoRepository';
+import { TODO } from '@/infrastructure/di/DependencyInjectionTokens';
 import { injectable, inject } from 'tsyringe';
 
 @injectable()
 export class UpdateTodoUseCase {
-  constructor(
-    @inject('TodoRepository') private todoRepository: TodoRepository
-  ) {}
+  constructor(@inject(TODO.Repo) private todoRepository: TodoRepository) {}
 
-  async execute(id: number, updatedFields: { title?: string; completed?: boolean }) {
+  async execute(
+    id: number,
+    updatedFields: { title?: string; completed?: boolean }
+  ) {
     const todo = await this.todoRepository.findById(id);
     if (!todo) {
       throw new Error('Todo not found');
