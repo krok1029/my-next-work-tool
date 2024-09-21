@@ -28,4 +28,9 @@ export class SupabaseAuthService implements AuthService {
 
     return { user, error };
   }
+  
+  async getSession() {
+    const { data: { session } } = await supabase.auth.getSession();
+    return { session };
+  }
 }
