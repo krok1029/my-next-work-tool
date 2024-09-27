@@ -1,6 +1,7 @@
 // infrastructure/di/Container.ts
 import 'reflect-metadata'; // tsyringe 需要
 import { container } from 'tsyringe';
+import { AUTH, TODO } from '@/infrastructure/di/DependencyInjectionTokens';
 import { PrismaTodoRepository } from '@/infrastructure/prisma/TodoRepositoryImpl';
 import { CreateTodoUseCase } from '@/application/todo/CreateTodoUseCase';
 import { UpdateTodoUseCase } from '@/application/todo/UpdateTodoUseCase';
@@ -9,7 +10,7 @@ import { GetTodoUseCase } from '@/application/todo/GetTodoUseCase';
 import { TodoRepository } from '@/domain/todo/TodoRepository';
 import { SignInUserUseCase } from '@/application/user/SignInUserUseCase';
 import { SupabaseAuthService } from '@/infrastructure/auth/SupabaseAuthService';
-import { AUTH, TODO } from '@/infrastructure/di/DependencyInjectionTokens';
+import { SignUpUserUseCase } from '@/application/user/SignUpUserUseCase';
 
 console.log('Container initialized');
 
@@ -31,5 +32,6 @@ container.register(TODO.Get, {
 });
 
 // 註冊 Auth
-container.registerSingleton(AUTH.Service, SupabaseAuthService);
-container.registerSingleton(AUTH.SignIn, SignInUserUseCase);
+container.register(AUTH.Service, { useClass: SupabaseAuthService });
+container.register(AUTH.SignIn, { useClass: SignInUserUseCase });
+container.register(AUTH.SignUp, { useClass: SignUpUserUseCase });

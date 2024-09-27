@@ -10,4 +10,5 @@ export enum TODO {
 export enum AUTH {
   Service = 'AuthService',
   SignIn = 'SignInUserUseCase',
+  SignUp = 'SignUpUserUseCase',
 }

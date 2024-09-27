@@ -28,6 +28,24 @@ export const signInSchema = z.object({
     .min(6, { message: 'Password must be at least 6 characters long' }),
 });
 
+export const signUpSchema = z
+  .object({
+    firstName: z.string().min(1, { message: 'First name is required' }),
+    lastName: z.string().min(1, { message: 'Last name is required' }),
+    email: z.string().email({ message: 'Invalid email address' }),
+    password: z
+      .string()
+      .min(8, { message: 'Password must be at least 8 characters long' })
+      .regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, {
+        message: 'Password must contain at least one letter and one number',
+      }),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'], // 指定錯誤訊息應該顯示在哪個欄位
+  });
+
 export function validatePayload<T>(schema: z.ZodType<T>) {
   return async (req: NextRequest): Promise<T> => {
     try {
