@@ -8,5 +8,5 @@ export interface AuthService {
     email: string,
     password: string
   ): Promise<{ user: string; error: null } | { user: null; error: any }>;
-  getSession(): Promise<{ session: any }>;
+  getSession(): Promise<{ session: { user: string; expiresAt?: Date } | null }>;
 }

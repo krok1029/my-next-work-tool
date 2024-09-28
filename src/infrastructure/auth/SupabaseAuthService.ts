@@ -32,6 +32,16 @@ export class SupabaseAuthService implements AuthService {
     const {
       data: { session },
     } = await supabase.auth.getSession();
-    return { session };
+
+    if (!session) {
+      return { session: null };
+    }
+    const { expires_at, user } = session;
+    return {
+      session: {
+        user: user.id,
+        expiresAt: expires_at ? new Date(expires_at * 1000) : undefined,
+      },
+    };
   }
 }
