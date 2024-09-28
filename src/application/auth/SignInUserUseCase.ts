@@ -1,7 +1,7 @@
+import '@/infrastructure/di/Container';
 import { injectable, inject } from 'tsyringe';
 import type { AuthService } from '@/domain/auth/AuthService';
 import { AUTH } from '@/infrastructure/di/DependencyInjectionTokens';
-import '@/infrastructure/di/Container';
 
 @injectable()
 export class SignInUserUseCase {
@@ -9,11 +9,14 @@ export class SignInUserUseCase {
 
   async execute(email: string, password: string) {
     const { data, error } = await this.authService.signIn(email, password);
-
+    console.log('data:', data);
     if (error) {
       throw new Error(error.message);
     }
+    if (!data) {
+      throw new Error('User ID not found after sign in.');
+    }
 
-    return data.user;
+    return data.userId;
   }
 }

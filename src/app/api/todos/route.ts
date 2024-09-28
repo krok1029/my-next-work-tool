@@ -1,10 +1,10 @@
 import 'reflect-metadata';
+import '@/infrastructure/di/Container';
 import { NextRequest, NextResponse } from 'next/server';
 import { container } from 'tsyringe';
 import { CreateTodoUseCase } from '@/application/todo/CreateTodoUseCase';
 import { GetAllTodosUseCase } from '@/application/todo/GetAllTodosUseCase';
 import { postTodoValidator, validatePayload } from '@/lib/validators';
-import '@/infrastructure/di/Container';
 
 export async function GET() {
   try {

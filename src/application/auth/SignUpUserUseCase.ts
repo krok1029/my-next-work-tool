@@ -1,7 +1,7 @@
+import '@/infrastructure/di/Container';
 import { injectable, inject } from 'tsyringe';
 import type { AuthService } from '@/domain/auth/AuthService';
 import { AUTH } from '@/infrastructure/di/DependencyInjectionTokens';
-import '@/infrastructure/di/Container';
 
 @injectable()
 export class SignUpUserUseCase {
@@ -14,10 +14,10 @@ export class SignUpUserUseCase {
       throw new Error(error.message);
     }
 
-    if (!data.user) {
+    if (!data) {
       throw new Error('User ID not found after sign up.');
     }
 
-    return data.user;
+    return data.userId;
   }
 }

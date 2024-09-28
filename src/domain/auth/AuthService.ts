@@ -1,6 +1,6 @@
 export interface AuthResult<T = any> {
   success: boolean;
-  data?: any;
+  data?: T;
   error?: Error;
 }
 
