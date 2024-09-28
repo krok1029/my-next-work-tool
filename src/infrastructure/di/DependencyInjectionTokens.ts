@@ -5,10 +5,12 @@ export enum TODO {
   Update = 'UpdateTodoUseCase',
   GetAll = 'GetAllTodosUseCase',
   Get = 'GetTodoUseCase',
-
 }
 export enum AUTH {
   Service = 'AuthService',
   SignIn = 'SignInUserUseCase',
   SignUp = 'SignUpUserUseCase',
+}
+export enum USER {
+  Repo = 'UserRepository',
 }

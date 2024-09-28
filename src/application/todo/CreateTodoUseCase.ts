@@ -9,7 +9,7 @@ export class CreateTodoUseCase {
     @inject(TODO.Repo) private todoRepository: TodoRepository
   ) {}
 
-  async execute(title: string, userId: number) {
+  async execute(title: string, userId: string) {
     const newTodo = await this.todoRepository.create({ title, userId });
     return newTodo;
   }

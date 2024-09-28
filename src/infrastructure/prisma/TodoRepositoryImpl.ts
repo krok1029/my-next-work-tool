@@ -3,7 +3,6 @@ import prisma from './PrismaClient';
 import { TodoRepository } from '@/domain/todo/TodoRepository';
 import { Todo } from '@/domain/todo/Todo';
 import { injectable } from 'tsyringe';
-import 'reflect-metadata';
 
 @injectable()
 export class PrismaTodoRepository implements TodoRepository {
@@ -31,7 +30,7 @@ export class PrismaTodoRepository implements TodoRepository {
       },
     });
   }
-  async create(data: { title: string; userId: number }): Promise<Todo> {
+  async create(data: { title: string; userId: string }): Promise<Todo> {
     const todoData = await prisma.todo.create({
       data: {
         title: data.title,
