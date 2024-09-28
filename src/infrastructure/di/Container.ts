@@ -21,28 +21,37 @@ import { PrismaUserRepository } from '@/infrastructure/prisma/UserRepositoryImpl
 console.log('Container initialized');
 
 // 註冊 Todo
-container.register<TodoRepository>(TODO.Repo, {
-  useClass: PrismaTodoRepository,
-});
-container.register(TODO.Create, {
-  useClass: CreateTodoUseCase,
-});
-container.register(TODO.Update, {
-  useClass: UpdateTodoUseCase,
-});
-container.register(TODO.GetAll, {
-  useClass: GetAllTodosUseCase,
-});
-container.register(TODO.Get, {
-  useClass: GetTodoUseCase,
-});
+if (!container.isRegistered(TODO.Repo)) {
+  console.log('Registering Todo Repo');
+  container.register<TodoRepository>(TODO.Repo, {
+    useClass: PrismaTodoRepository,
+  });
+  container.register(TODO.Create, {
+    useClass: CreateTodoUseCase,
+  });
+  container.register(TODO.Update, {
+    useClass: UpdateTodoUseCase,
+  });
+  container.register(TODO.GetAll, {
+    useClass: GetAllTodosUseCase,
+  });
+  container.register(TODO.Get, {
+    useClass: GetTodoUseCase,
+  });
+}
 
-// 註冊 Auth
-container.register(AUTH.Service, { useClass: SupabaseAuthService });
-container.register(AUTH.SignIn, { useClass: SignInUserUseCase });
-container.register(AUTH.SignUp, { useClass: SignUpUserUseCase });
+if (!container.isRegistered(USER.Repo)) {
+  console.log('Registering User Repo');
+  // 註冊 User
+  container.register<UserRepository>(USER.Repo, {
+    useClass: PrismaUserRepository,
+  });
+}
 
-// 註冊 User
-container.register<UserRepository>(USER.Repo, {
-  useClass: PrismaUserRepository,
-});
+if (!container.isRegistered(AUTH.Service)) {
+  console.log('Registering Auth Service');
+  // 註冊 Auth
+  container.register(AUTH.Service, { useClass: SupabaseAuthService });
+  container.register(AUTH.SignIn, { useClass: SignInUserUseCase });
+  container.register(AUTH.SignUp, { useClass: SignUpUserUseCase });
+}

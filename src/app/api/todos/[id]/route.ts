@@ -4,6 +4,7 @@ import { container } from 'tsyringe';
 import { UpdateTodoUseCase } from '@/application/todo/UpdateTodoUseCase';
 import { GetTodoUseCase } from '@/application/todo/GetTodoUseCase';
 import { putTodoValidator, validatePayload } from '@/lib/validators';
+import '@/infrastructure/di/Container';
 
 export async function PATCH(
   req: NextRequest,

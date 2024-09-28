@@ -2,6 +2,7 @@
 import { useTransition } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation'; //
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,6 +16,7 @@ export const description =
 function LoginForm() {
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
+  const router = useRouter(); // 使用 useRouter 進行導航
 
   const handleSubmit = async (formData: FormData) => {
     startTransition(async () => {
@@ -23,6 +25,7 @@ function LoginForm() {
         toast({
           description: result.message,
         });
+        router.push('/dashboard'); // 導航到 dashboard 頁面
       } else {
         toast({
           variant: 'destructive',
