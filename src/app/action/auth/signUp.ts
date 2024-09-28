@@ -3,8 +3,8 @@
 import bcrypt from 'bcrypt';
 import '@/infrastructure/di/Container';
 import { container } from 'tsyringe';
-import { SignUpUserUseCase } from '@/application/user/SignUpUserUseCase';
-import { signUpSchema, validatePayload } from '@/lib/validators';
+import { SignUpUserUseCase } from '@/application/auth/SignUpUserUseCase';
+import { signUpSchema } from '@/lib/validators';
 
 // 定義 Server Action
 export async function signUp(data: FormData) {
@@ -19,10 +19,10 @@ export async function signUp(data: FormData) {
   try {
     // 使用 Zod 進行表單驗證
     signUpSchema.parse(formValues);
-    
+
     // 雜湊密碼
     const hashedPassword = await bcrypt.hash(formValues.password, 10);
-    
+
     console.log('hashedPassword:', hashedPassword);
     const signUpUserUseCase = container.resolve(SignUpUserUseCase);
 
@@ -30,7 +30,9 @@ export async function signUp(data: FormData) {
       formValues.email,
       hashedPassword
     );
-    console.log("user", user);
+
+
+    console.log('user', user);
     return { success: true, message: 'User created successfully' };
   } catch (error: any) {
     return { success: false, message: error.message };

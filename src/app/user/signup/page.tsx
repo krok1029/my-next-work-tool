@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { signUp } from '@/app/action/auth/signUp';
 
-function LoginForm() {
+function RegisterForm() {
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -23,9 +23,9 @@ function LoginForm() {
     startTransition(async () => {
       const result = await signUp(formData);
       if (result?.success) {
-        setError(result.message);
-      } else {
         setError(null);
+      } else {
+        setError(result.message);
       }
     });
   };
@@ -88,4 +88,4 @@ function LoginForm() {
   );
 }
 
-export default LoginForm;
+export default RegisterForm;

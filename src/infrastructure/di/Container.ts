@@ -8,9 +8,9 @@ import { UpdateTodoUseCase } from '@/application/todo/UpdateTodoUseCase';
 import { GetAllTodosUseCase } from '@/application/todo/GetAllTodosUseCase';
 import { GetTodoUseCase } from '@/application/todo/GetTodoUseCase';
 import { TodoRepository } from '@/domain/todo/TodoRepository';
-import { SignInUserUseCase } from '@/application/user/SignInUserUseCase';
+import { SignInUserUseCase } from '@/application/auth/SignInUserUseCase';
 import { SupabaseAuthService } from '@/infrastructure/auth/SupabaseAuthService';
-import { SignUpUserUseCase } from '@/application/user/SignUpUserUseCase';
+import { SignUpUserUseCase } from '@/application/auth/SignUpUserUseCase';
 
 console.log('Container initialized');
 

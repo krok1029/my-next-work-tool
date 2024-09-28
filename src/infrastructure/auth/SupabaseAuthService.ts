@@ -6,31 +6,32 @@ import { injectable } from 'tsyringe';
 @injectable()
 export class SupabaseAuthService implements AuthService {
   async signIn(email: string, password: string) {
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
-
-    return { user, error };
+    if (error) {
+      return { user: null, error };
+    }
+    return { user: data.user.id, error };
   }
 
   async signUp(email: string, password: string) {
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
     });
 
-    return { user, error };
+    if (error) {
+      return { user: null, error };
+    }
+    return { user: data.user?.id || '', error };
   }
-  
+
   async getSession() {
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     return { session };
   }
 }

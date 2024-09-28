@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import { container } from 'tsyringe';
-import { CheckSessionUseCase } from '@/application/user/CheckSessionUseCase';
+import { CheckSessionUseCase } from '@/application/auth/CheckSessionUseCase';
 
 export default async function Home() {
   const checkSessionUseCase = container.resolve(CheckSessionUseCase);

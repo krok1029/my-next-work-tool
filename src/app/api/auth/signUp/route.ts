@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { container } from 'tsyringe';
-import { SignUpUserUseCase } from '@/application/user/SignUpUserUseCase';
+import { SignUpUserUseCase } from '@/application/auth/SignUpUserUseCase';
 import { signUpSchema, validatePayload } from '@/lib/validators';
 
 // 定義 Zod Schema
