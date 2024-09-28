@@ -1,12 +1,19 @@
-// src/domain/auth/AuthService.ts
+export interface AuthResult<T = any> {
+  success: boolean;
+  data?: any;
+  error?: Error;
+}
+
 export interface AuthService {
   signIn(
     email: string,
     password: string
-  ): Promise<{ user: string; error: null } | { user: null; error: any }>;
+  ): Promise<AuthResult<{ userId: string }>>;
   signUp(
     email: string,
     password: string
-  ): Promise<{ user: string; error: null } | { user: null; error: any }>;
-  getSession(): Promise<{ session: { user: string; expiresAt?: Date } | null }>;
+  ): Promise<AuthResult<{ userId: string }>>;
+  getSession(): Promise<
+    AuthResult<{ userId: string; expiresAt?: Date } | null>
+  >;
 }

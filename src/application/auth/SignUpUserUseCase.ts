@@ -9,16 +9,16 @@ export class SignUpUserUseCase {
   async execute(email: string, password: string) {
     // 雜湊密碼
 
-    const { user, error } = await this.authService.signUp(email, password);
+    const { data, error } = await this.authService.signUp(email, password);
 
     if (error) {
       throw new Error(error.message);
     }
 
-    if (!user) {
+    if (!data.user) {
       throw new Error('User ID not found after sign up.');
     }
 
-    return user;
+    return data.user;
   }
 }

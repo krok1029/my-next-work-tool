@@ -11,7 +11,7 @@ const NewTodos = ({ onTodoCreated }: { onTodoCreated: () => void }) => {
   const saveTodo = async (
     updatedFields: Partial<{
       title: string;
-      userId: number;
+      userId: string;
       completed: boolean;
     }>
   ) => {
@@ -47,7 +47,7 @@ const NewTodos = ({ onTodoCreated }: { onTodoCreated: () => void }) => {
     }
     saveTodo({
       title: editedTitle,
-      userId: 1, // 假設用戶 ID 為 1，根據實際情況調整
+      userId: 'a2bd4a24-7dd2-4441-bd56-2e6748b76d63',
     });
   };
 
