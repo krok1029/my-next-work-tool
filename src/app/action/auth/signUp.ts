@@ -8,12 +8,12 @@ import { CreateUserUseCase } from '@/application/user/CreateUserUseCase';
 
 // 定義 Server Action
 export async function signUp(data: FormData) {
-  const formValues = {
-    firstName: data.get('firstName') as string,
-    lastName: data.get('lastName') as string,
-    email: data.get('email') as string,
-    password: data.get('password') as string,
-    confirmPassword: data.get('confirmPassword') as string,
+  const formValues: Record<string, string> = {
+    firstName: data.get('firstName')?.toString() ?? '',
+    lastName: data.get('lastName')?.toString() ?? '',
+    email: data.get('email')?.toString() ?? '',
+    password: data.get('password')?.toString() ?? '',
+    confirmPassword: data.get('confirmPassword')?.toString() ?? '',
   };
 
   try {
