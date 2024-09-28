@@ -12,7 +12,7 @@ datasource db {
 }
 
 model User {
-  id           Int      @id @default(autoincrement())
+  id           String   @id @default(cuid()) 
   email        String   @unique
   name         String
   workDuration Int      @default(25)  // 用戶的番茄鐘工作時間，默認25分鐘
@@ -27,6 +27,6 @@ model Todo {
   createdAt          DateTime @default(now())
   totalPomodoros     Int      @default(1)
   completedPomodoros Int      @default(0)
-  userId             Int      // 外鍵，關聯用戶的ID
+  userId             String   // 外鍵，關聯用戶的ID，改為 String 類型
   user               User     @relation(fields: [userId], references: [id], onDelete: Cascade) // 建立與 User 的關聯
 }
