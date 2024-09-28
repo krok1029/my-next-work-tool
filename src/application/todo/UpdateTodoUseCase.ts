@@ -2,6 +2,7 @@
 import type { TodoRepository } from '@/domain/todo/TodoRepository';
 import { TODO } from '@/infrastructure/di/DependencyInjectionTokens';
 import { injectable, inject } from 'tsyringe';
+import '@/infrastructure/di/Container';
 
 @injectable()
 export class UpdateTodoUseCase {

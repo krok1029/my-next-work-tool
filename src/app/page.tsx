@@ -6,6 +6,7 @@ export default async function Home() {
   const checkSessionUseCase = container.resolve(CheckSessionUseCase);
   const { success, data } = await checkSessionUseCase.execute();
 
+  console.log('data', data);
   if (!success || !data) {
     // 如果沒有 session，重定向到登入頁面
     redirect('/user/signin');
