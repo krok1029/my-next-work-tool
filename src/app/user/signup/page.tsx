@@ -13,10 +13,12 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { signUp } from '@/app/action/auth/signUp';
+import { useToast } from '@/hooks/use-toast';
 
 function RegisterForm() {
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const { toast } = useToast();
 
   // 處理表單提交
   const handleSubmit = async (formData: FormData) => {
@@ -24,8 +26,15 @@ function RegisterForm() {
       const result = await signUp(formData);
       if (result?.success) {
         setError(null);
+        toast({
+          description: result.message,
+        });
       } else {
         setError(result.message);
+        toast({
+          variant: 'destructive',
+          description: result.message,
+        });
       }
     });
   };
