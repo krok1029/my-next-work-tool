@@ -10,9 +10,6 @@ import { Label } from '@/components/ui/label';
 import { signIn } from '@/app/action/auth/signIn';
 import { useToast } from '@/hooks/use-toast';
 
-export const description =
-  "A login page with two columns. The first column has the login form with email and password. There's a Forgot your passwork link and a link to sign up if you do not have an account. The second column has a cover image.";
-
 function LoginForm() {
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
@@ -25,7 +22,7 @@ function LoginForm() {
         toast({
           description: result.message,
         });
-        router.push('/dashboard'); 
+        router.push('/dashboard');
       } else {
         toast({
           variant: 'destructive',

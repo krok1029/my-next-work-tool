@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation';
+import 'reflect-metadata';
 import { container } from 'tsyringe';
 import { CheckSessionUseCase } from '@/application/auth/CheckSessionUseCase';
 
