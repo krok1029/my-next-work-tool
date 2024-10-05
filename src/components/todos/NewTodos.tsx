@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { client } from '@/lib/supabaseClient';
 
 const NewTodos = ({ onTodoCreated }: { onTodoCreated: () => void }) => {
   const [editedTitle, setEditedTitle] = useState('');
@@ -11,7 +12,6 @@ const NewTodos = ({ onTodoCreated }: { onTodoCreated: () => void }) => {
   const saveTodo = async (
     updatedFields: Partial<{
       title: string;
-      userId: string;
       completed: boolean;
     }>
   ) => {
@@ -47,7 +47,6 @@ const NewTodos = ({ onTodoCreated }: { onTodoCreated: () => void }) => {
     }
     saveTodo({
       title: editedTitle,
-      userId: 'a2bd4a24-7dd2-4441-bd56-2e6748b76d63',
     });
   };
 

@@ -6,7 +6,6 @@ import type { NextRequest } from 'next/server';
 // Todo 的驗證邏輯
 export const postTodoValidator = z.object({
   title: z.string().min(1, { message: "Title can't be empty" }),
-  userId: z.string(),
   completed: z.boolean().optional(),
 });
 

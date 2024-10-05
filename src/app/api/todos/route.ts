@@ -26,10 +26,10 @@ export async function POST(req: NextRequest) {
     const parsedBody = await validatePayload(postTodoValidator)(req);
 
     // 提取已驗證的數據
-    const { title, userId } = parsedBody;
+    const { title } = parsedBody;
 
     const createTodoUseCase = container.resolve(CreateTodoUseCase);
-    const newTodo = await createTodoUseCase.execute(title, userId);
+    const newTodo = await createTodoUseCase.execute(title);
 
     // 返回新創建的 Todo 數據
     return NextResponse.json(newTodo, { status: 201 }); // 返回 201 創建成功狀態
