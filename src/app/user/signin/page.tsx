@@ -25,7 +25,7 @@ function LoginForm() {
         toast({
           description: result.message,
         });
-        router.push('/dashboard'); // 導航到 dashboard 頁面
+        router.push('/dashboard'); 
       } else {
         toast({
           variant: 'destructive',

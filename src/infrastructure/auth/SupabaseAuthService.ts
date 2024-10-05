@@ -1,5 +1,5 @@
 import { AuthService, AuthResult } from '@/domain/auth/AuthService';
-import { supabase } from '@/lib/supabaseClient';
+import { createClient } from '@/lib/supabaseClient';
 import { injectable } from 'tsyringe';
 
 @injectable()
@@ -9,6 +9,7 @@ export class SupabaseAuthService implements AuthService {
     password: string
   ): Promise<AuthResult<{ userId: string }>> {
     try {
+      const supabase = createClient();
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -27,6 +28,7 @@ export class SupabaseAuthService implements AuthService {
     password: string
   ): Promise<AuthResult<{ userId: string }>> {
     try {
+      const supabase = createClient();
       const { data, error } = await supabase.auth.signUp({ email, password });
       if (error) {
         return { success: false, error };
@@ -40,21 +42,20 @@ export class SupabaseAuthService implements AuthService {
   async getSession(): Promise<
     AuthResult<{ userId: string; expiresAt?: Date } | null>
   > {
+    const supabase = createClient();
     try {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+      const { data } = await supabase.auth.getUser();
+      const { user } = data;
+      console.log('data:::', data);
 
-      if (!session) {
+      if (!user) {
         return { success: true, data: null };
       }
 
-      const { expires_at, user } = session;
       return {
         success: true,
         data: {
           userId: user.id,
-          expiresAt: expires_at ? new Date(expires_at * 1000) : undefined,
         },
       };
     } catch (error) {

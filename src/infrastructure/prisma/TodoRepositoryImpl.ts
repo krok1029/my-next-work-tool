@@ -14,8 +14,12 @@ export class PrismaTodoRepository implements TodoRepository {
     return new Todo(todoData.id, todoData.title, todoData.completed);
   }
 
-  async findAll(): Promise<Todo[]> {
-    const todoData = await prisma.todo.findMany();
+  async findAllByUser(userId: string): Promise<Todo[]> {
+    const todoData = await prisma.todo.findMany({
+      where: {
+        userId,
+      },
+    });
     return todoData.map(
       (todoData) => new Todo(todoData.id, todoData.title, todoData.completed)
     );

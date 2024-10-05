@@ -10,7 +10,6 @@ export default async function Home() {
   if (!success || !data) {
     // 如果沒有 session，重定向到登入頁面
     redirect('/user/signin');
-    return;
   }
 
   // 如果有 session，重定向到 /dashboard
