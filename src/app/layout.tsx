@@ -33,7 +33,7 @@ export default function RootLayout({
       >
         <ThemeProvider>
           <Navbar />
-          <div className="px-24">{children}</div>
+          <div className="px-4 md:px-24">{children}</div>
           <Toaster />
         </ThemeProvider>
       </body>
