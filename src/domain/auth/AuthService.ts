@@ -16,4 +16,5 @@ export interface AuthService {
   getSession(): Promise<
     AuthResult<{ userId: string; expiresAt?: Date } | null>
   >;
+  signOut(): Promise<AuthResult<void>>;
 }

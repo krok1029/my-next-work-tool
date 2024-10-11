@@ -62,4 +62,14 @@ export class SupabaseAuthService implements AuthService {
       return { success: false, error: error as Error };
     }
   }
+
+  async signOut(): Promise<AuthResult<void>> {
+    try {
+      const supabase = createClient();
+      await supabase.auth.signOut();
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error as Error };
+    }
+  }
 }

@@ -7,10 +7,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useEffect, useState } from 'react';
+import { signOut } from '@/app/action/auth/signOut';
 import { User as UserIcon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 const User = () => {
+  const router = useRouter();
+  const handleSignOut = async () => {
+    await signOut();
+    router.push('/user/signin');
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -20,7 +27,7 @@ const User = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem>Log out</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleSignOut}>Log out</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
