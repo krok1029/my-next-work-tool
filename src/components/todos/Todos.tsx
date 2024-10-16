@@ -27,7 +27,6 @@ const Todos = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Todos</h1>
       <NewTodos onTodoCreated={fetchTodos} /> {/* 創建新 Todo 後重新 fetch */}
       <div className="max-h-80 overflow-y-auto">
         {todos.map((todo) => (
