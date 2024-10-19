@@ -12,6 +12,8 @@ import {
 import { ChartConfig, ChartContainer } from '@/components/ui/chart';
 import { Button } from '@/components/ui/button';
 import { CardFooter } from '../ui/card';
+import useFetch from '@/hooks/use-fetch';
+import { User } from '@/domain/user/User';
 
 const chartConfig = {
   default: {
@@ -19,13 +21,12 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export default function CountdownTimer({
-  duration = 25 * 60,
-}: {
-  duration?: number;
-}) {
+export default function CountdownTimer() {
+  const { data: user, isLoading } = useFetch<User>('/api/user');
+
+  const duration = user ? user.workDuration * 60 : 0 * 60;
   const [timeLeft, setTimeLeft] = useState<number>(duration);
-  const [isRunning, setIsRunning] = useState<boolean>(true);
+  const [isRunning, setIsRunning] = useState<boolean>(false);
 
   useEffect(() => {
     if (!isRunning) return;
@@ -44,6 +45,10 @@ export default function CountdownTimer({
     return () => clearInterval(interval);
   }, [isRunning]);
 
+  if (isLoading) {
+    return;
+  }
+
   const resetTimer = () => {
     setTimeLeft(duration);
     setIsRunning(true);
@@ -52,7 +57,6 @@ export default function CountdownTimer({
   const percentage = (timeLeft / duration) * 100;
   const dynamicEndAngle = 90 - (percentage * 360) / 100;
 
-  // 将秒转换为分钟和秒格式
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;
   const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds
