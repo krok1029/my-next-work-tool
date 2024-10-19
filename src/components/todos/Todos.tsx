@@ -5,23 +5,20 @@ import NewTodos from './NewTodos';
 import TodoItem from './TodoItem';
 import { Todo } from '@/domain/todo/Todo';
 
-// fetcher 函數用來處理資料抓取
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 const Todos = () => {
-  // 使用 SWR 來抓取資料
   const {
     data: todos,
     error,
     isLoading,
   } = useSWR<Todo[]>('/api/todos', fetcher, {
-    revalidateOnFocus: true, // 當重新聚焦頁面時，重新抓取資料
+    revalidateOnFocus: true,
+    refreshInterval: 0,
   });
 
-  // 處理載入中狀態
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return;
 
-  // 處理錯誤
   if (error) return <p className="text-red-500">Error fetching todos</p>;
 
   return (

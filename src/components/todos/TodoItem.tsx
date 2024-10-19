@@ -27,8 +27,9 @@ const TodoItem = ({ todo }: { todo: Todo }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(title);
   const [isCompleted, setIsCompleted] = useState(completed);
-  const [isSaving, setIsSaving] = useState(false); // 防止重複提交的加載狀態
+  const [isSaving, setIsSaving] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+
   const saveTodo = async (
     updatedFields: Partial<{ title: string; completed: boolean }>
   ) => {
@@ -57,10 +58,12 @@ const TodoItem = ({ todo }: { todo: Todo }) => {
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!isSaving && editedTitle !== title) {
-      saveTodo({ title: editedTitle });
+      await saveTodo({ title: editedTitle });
+      mutate('/api/todos');
     }
+    setIsEditing(false);
   };
 
   const deleteTodo = async () => {
@@ -106,13 +109,14 @@ const TodoItem = ({ todo }: { todo: Todo }) => {
                 value={editedTitle}
                 onChange={(e) => setEditedTitle(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    handleSave(); // 用戶按下回車鍵時保存編輯
+                  if (e.key === 'Enter' || e.key === 'Escape') {
+                    handleSave();
                   }
                 }}
                 onBlur={handleSave}
                 className="border border-gray-300 rounded-md"
-                disabled={isSaving} // 如果正在保存，禁用操作
+                disabled={isSaving}
+                autoFocus
               />
             ) : (
               <span
@@ -120,9 +124,9 @@ const TodoItem = ({ todo }: { todo: Todo }) => {
                 onClick={() => {
                   if (!isSaving) {
                     if (isEditing) {
-                      handleSave(); // 當處於編輯模式時保存
+                      handleSave();
                     } else {
-                      setIsEditing(true); // 否則進入編輯模式
+                      setIsEditing(true);
                     }
                   }
                 }}
@@ -132,14 +136,14 @@ const TodoItem = ({ todo }: { todo: Todo }) => {
             )}
             <DropdownMenu modal={false}>
               <DropdownMenuTrigger>
-                <EllipsisVertical />
+                {!isEditing && <EllipsisVertical />}
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuItem onClick={() => setIsEditing(true)}>
                   Edit
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={toggleCompleted} disabled={isSaving}>
-                  Completed
+                  {isCompleted ? 'Mark as Incomplete' : 'Mark as Complete'}
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => setOpenDeleteDialog(true)}
