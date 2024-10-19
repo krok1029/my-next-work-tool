@@ -4,18 +4,10 @@ import useSWR from 'swr';
 import NewTodos from './NewTodos';
 import TodoItem from './TodoItem';
 import { Todo } from '@/domain/todo/Todo';
-
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+import useFetch from '@/hooks/use-fetch';
 
 const Todos = () => {
-  const {
-    data: todos,
-    error,
-    isLoading,
-  } = useSWR<Todo[]>('/api/todos', fetcher, {
-    revalidateOnFocus: true,
-    refreshInterval: 0,
-  });
+  const { data: todos, error, isLoading } = useFetch<Todo[]>('/api/todos');
 
   if (isLoading) return;
 
