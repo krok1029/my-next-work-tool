@@ -1,35 +1,34 @@
-// /components/Todos.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import useSWR from 'swr';
 import NewTodos from './NewTodos';
 import TodoItem from './TodoItem';
 import { Todo } from '@/domain/todo/Todo';
 
-const Todos = () => {
-  const [todos, setTodos] = useState<Todo[]>([]);
-  const fetchTodos = async () => {
-    try {
-      const response = await fetch('/api/todos'); // 調用 API 路由
-      if (!response.ok) {
-        throw new Error('Failed to fetch todos');
-      }
-      const data = await response.json();
-      setTodos(data); // 設置拿到的 todos 列表
-    } catch (error) {
-      console.error('Error fetching todos:', error);
-    }
-  };
+// fetcher 函數用來處理資料抓取
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-  useEffect(() => {
-    fetchTodos();
-  }, []);
+const Todos = () => {
+  // 使用 SWR 來抓取資料
+  const {
+    data: todos,
+    error,
+    isLoading,
+  } = useSWR<Todo[]>('/api/todos', fetcher, {
+    revalidateOnFocus: true, // 當重新聚焦頁面時，重新抓取資料
+  });
+
+  // 處理載入中狀態
+  if (isLoading) return <p>Loading...</p>;
+
+  // 處理錯誤
+  if (error) return <p className="text-red-500">Error fetching todos</p>;
 
   return (
     <div className="p-4">
-      <NewTodos onTodoCreated={fetchTodos} /> {/* 創建新 Todo 後重新 fetch */}
+      <NewTodos />
       <div className="max-h-80 overflow-y-auto">
-        {todos.map((todo) => (
+        {todos?.map((todo) => (
           <TodoItem key={todo.id} todo={todo} />
         ))}
       </div>

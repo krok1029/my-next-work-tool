@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { mutate } from 'swr';
 
-const NewTodos = ({ onTodoCreated }: { onTodoCreated: () => void }) => {
+const NewTodos = () => {
   const [editedTitle, setEditedTitle] = useState('');
   const [isSaving, setIsSaving] = useState(false); // 用於防止重複提交和顯示加載狀態
 
@@ -28,7 +29,7 @@ const NewTodos = ({ onTodoCreated }: { onTodoCreated: () => void }) => {
         const newTodo = await response.json();
         console.log('New Todo created:', newTodo);
         setEditedTitle(''); // 重置輸入框
-        onTodoCreated();
+        mutate('/api/todos');
       } else {
         console.error('Failed to create todo');
       }

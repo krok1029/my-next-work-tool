@@ -6,4 +6,5 @@ export interface TodoRepository {
   findAllByUser(userId: string): Promise<Todo[]>;
   save(todo: Todo): Promise<void>;
   create(data: { title: string; userId: string }): Promise<Todo>;
+  delete(id: number): Promise<void>;
 }
