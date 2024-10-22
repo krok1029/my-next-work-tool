@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { CardFooter } from '../ui/card';
 import useFetch from '@/hooks/use-fetch';
 import { User } from '@/domain/user/User';
+import { Pause, Play, RotateCcw } from 'lucide-react';
 
 const chartConfig = {
   default: {
@@ -35,7 +36,6 @@ export default function CountdownTimer() {
       setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(interval);
-          setIsRunning(false);
           return 0;
         }
         return prev - 1;
@@ -51,17 +51,13 @@ export default function CountdownTimer() {
 
   const resetTimer = () => {
     setTimeLeft(duration);
-    setIsRunning(true);
+    setIsRunning(false);
   };
+
+  const formattedTime = secondTimeFormatter(timeLeft);
 
   const percentage = (timeLeft / duration) * 100;
   const dynamicEndAngle = 90 - (percentage * 360) / 100;
-
-  const minutes = Math.floor(timeLeft / 60);
-  const seconds = timeLeft % 60;
-  const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds
-    .toString()
-    .padStart(2, '0')}`;
 
   const chartData = [
     { name: 'Time Left', visitors: percentage, fill: 'var(--color-default)' },
@@ -115,10 +111,29 @@ export default function CountdownTimer() {
         </RadialBarChart>
       </ChartContainer>
       <CardFooter className="justify-center">
-        <Button variant="outline" onClick={resetTimer}>
-          Reset
-        </Button>
+        <div className="flex gap-2">
+          {isRunning ? (
+            <Button variant="outline" onClick={() => setIsRunning(false)}>
+              <Pause />
+            </Button>
+          ) : (
+            <Button variant="outline" onClick={() => setIsRunning(true)}>
+              <Play />
+            </Button>
+          )}
+          <Button variant="outline" onClick={resetTimer}>
+            <RotateCcw />
+          </Button>
+        </div>
       </CardFooter>
     </>
   );
 }
+
+const secondTimeFormatter = (seconds: number) => {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${minutes.toString().padStart(2, '0')}:${remainingSeconds
+    .toString()
+    .padStart(2, '0')}`;
+};
