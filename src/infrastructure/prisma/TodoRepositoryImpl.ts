@@ -11,7 +11,7 @@ export class PrismaTodoRepository implements TodoRepository {
     if (!todoData) {
       return null;
     }
-    return new Todo(todoData.id, todoData.title, todoData.completed);
+    return new Todo(todoData);
   }
 
   async findAllByUser(userId: string): Promise<Todo[]> {
@@ -20,9 +20,7 @@ export class PrismaTodoRepository implements TodoRepository {
         userId,
       },
     });
-    return todoData.map(
-      (todoData) => new Todo(todoData.id, todoData.title, todoData.completed)
-    );
+    return todoData.map((todoData) => new Todo(todoData));
   }
 
   async save(todo: Todo): Promise<void> {
@@ -31,6 +29,8 @@ export class PrismaTodoRepository implements TodoRepository {
       data: {
         title: todo.title,
         completed: todo.completed,
+        totalPomodoros: todo.totalPomodoros,
+        completedPomodoros: todo.completedPomodoros,
       },
     });
   }
@@ -45,7 +45,7 @@ export class PrismaTodoRepository implements TodoRepository {
       },
     });
 
-    return new Todo(todoData.id, todoData.title, todoData.completed);
+    return new Todo(todoData);
   }
   async delete(id: number): Promise<void> {
     await prisma.todo.delete({

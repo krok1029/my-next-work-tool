@@ -1,6 +1,5 @@
 'use client';
 
-import useSWR from 'swr';
 import NewTodos from './NewTodos';
 import TodoItem from './TodoItem';
 import { Todo } from '@/domain/todo/Todo';

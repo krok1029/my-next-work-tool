@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Todo } from '@/domain/todo/Todo';
-import { EllipsisVertical, GripVertical } from 'lucide-react';
+import { EllipsisVertical } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,9 +21,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import clsx from 'clsx';
 
 const TodoItem = ({ todo }: { todo: Todo }) => {
-  const { id, title, completed } = todo;
+  const { id, title, completed, totalPomodoros, completedPomodoros } = todo;
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(title);
   const [isCompleted, setIsCompleted] = useState(completed);
@@ -99,7 +100,6 @@ const TodoItem = ({ todo }: { todo: Todo }) => {
 
   return (
     <div className="flex items-center gap-4">
-      <GripVertical />
       <Card className="my-3 flex-1">
         <CardContent className="flex justify-between items-center py-4">
           <div className="flex w-full items-center space-x-2">
@@ -120,7 +120,10 @@ const TodoItem = ({ todo }: { todo: Todo }) => {
               />
             ) : (
               <span
-                className={`grow ${isCompleted ? 'line-through' : ''}`}
+                className={clsx(
+                  'grow shrink truncate w-0',
+                  isCompleted && 'line-through'
+                )}
                 onClick={() => {
                   if (!isSaving) {
                     if (isEditing) {
@@ -133,6 +136,10 @@ const TodoItem = ({ todo }: { todo: Todo }) => {
               >
                 {editedTitle}
               </span>
+            )}
+
+            {!isEditing && (
+              <span className="text-nowrap">{`${completedPomodoros} / ${totalPomodoros}`}</span>
             )}
             <DropdownMenu modal={false}>
               <DropdownMenuTrigger>

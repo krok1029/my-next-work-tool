@@ -1,9 +1,25 @@
+import { Todo as PrismaTodo } from '@prisma/client';
+
 export class Todo {
-  constructor(
-    public readonly id: number,
-    public title: string,
-    public completed: boolean
-  ) {}
+  public readonly id: number;
+  public title: string;
+  public completed: boolean;
+  public totalPomodoros: number;
+  public completedPomodoros: number;
+
+  constructor({
+    id,
+    title,
+    completed,
+    totalPomodoros,
+    completedPomodoros,
+  }: PrismaTodo) {
+    this.id = id;
+    this.title = title;
+    this.completed = completed;
+    this.totalPomodoros = totalPomodoros;
+    this.completedPomodoros = completedPomodoros;
+  }
 
   complete() {
     if (this.completed) {
@@ -24,5 +40,15 @@ export class Todo {
       throw new Error('Title cannot be empty');
     }
     this.title = newTitle;
+  }
+
+  consumePomodoro() {
+    if (this.completedPomodoros >= this.totalPomodoros) {
+      throw new Error('Todo is already completed');
+    }
+    this.completedPomodoros++;
+    if (this.completedPomodoros === this.totalPomodoros) {
+      this.complete();
+    }
   }
 }
