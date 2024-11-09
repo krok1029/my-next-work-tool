@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,13 +8,20 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
 model User {
-  id           String   @id @default(cuid()) 
-  email        String   @unique
-  name         String
-  workDuration Int      @default(25)  // 用戶的番茄鐘工作時間，默認25分鐘
-  breakDuration Int     @default(5)   // 用戶的番茄鐘休息時間，默認5分鐘
-  todos        Todo[]   // 關聯用戶的待辦事項
+  id            String      @id @default(cuid())
+  email         String      @unique
+  name          String
+  workDuration  Int         @default(25) // 用戶的番茄鐘工作時間，默認25分鐘
+  breakDuration Int         @default(5) // 用戶的番茄鐘休息時間，默認5分鐘
+  todos         Todo[] // 關聯用戶的待辦事項
+  statistics    Statistics? // 關聯統計數據
 }
 
 model Todo {
@@ -27,6 +31,28 @@ model Todo {
   createdAt          DateTime @default(now())
   totalPomodoros     Int      @default(1)
   completedPomodoros Int      @default(0)
-  userId             String   // 外鍵，關聯用戶的ID，改為 String 類型
-  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade) // 建立與 User 的關聯
+  userId             String // 外鍵，關聯用戶的ID
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  priority           Priority @default(MEDIUM) // 使用 enum 設定優先級
+  parentTodoId       Int?
+  parentTodo         Todo?    @relation("TodoChildren", fields: [parentTodoId], references: [id])
+  subTodos           Todo[]   @relation("TodoChildren")
+  tags               Tag[]    @relation("TodoTags")
+  deadline           DateTime @default(now())
+}
+
+model Tag {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  todos Todo[] @relation("TodoTags") // 標籤與任務的關聯
+}
+
+model Statistics {
+  id                  Int    @id @default(autoincrement())
+  userId              String @unique // 外鍵，關聯用戶
+  user                User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  totalCompletedTasks Int    @default(0) // 完成的任務數量
+  totalPomodorosSpent Int    @default(0) // 花費的總番茄鐘數量
+  averagePomodoros    Float  @default(0) // 平均每個任務花費的番茄鐘數量
+  mostUsedTags        String // 最常用的標籤，存儲為一個字符串，最多顯示3個標籤
 }
