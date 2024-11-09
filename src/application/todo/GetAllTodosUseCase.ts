@@ -19,6 +19,9 @@ export class GetAllTodosUseCase {
       throw new Error('User not authenticated');
     }
     const userId = session.data.userId;
-    return this.todoRepository.findAllByUser(userId);
+    return this.todoRepository.findAllByUser(userId, {
+      deadlineToday: true,
+      sortByPriority: true,
+    });
   }
 }

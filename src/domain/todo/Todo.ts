@@ -1,4 +1,15 @@
-import { Todo as PrismaTodo } from '@prisma/client';
+import { Todo as PrismaTodo, Priority } from '@prisma/client';
+
+export interface TodoFilter {
+  deadlineToday?: boolean;
+  sortByPriority?: boolean;
+  completed?: boolean;
+  deadlineBefore?: Date;
+  deadlineAfter?: Date;
+  priority?: Priority;
+  tag?: string; // 根據標籤過濾
+  search?: string; // 根據標題模糊搜尋
+}
 
 export class Todo {
   public readonly id: number;
@@ -14,6 +25,7 @@ export class Todo {
     totalPomodoros,
     completedPomodoros,
   }: PrismaTodo) {
+    this;
     this.id = id;
     this.title = title;
     this.completed = completed;

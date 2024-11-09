@@ -1,8 +1,10 @@
 // infrastructure/prisma/TodoRepositoryImpl.ts
 import prisma from './PrismaClient';
 import { TodoRepository } from '@/domain/todo/TodoRepository';
-import { Todo } from '@/domain/todo/Todo';
+import { Todo, TodoFilter } from '@/domain/todo/Todo';
 import { injectable } from 'tsyringe';
+import dayjs from 'dayjs';
+import { Prisma } from '@prisma/client';
 
 @injectable()
 export class PrismaTodoRepository implements TodoRepository {
@@ -14,15 +16,39 @@ export class PrismaTodoRepository implements TodoRepository {
     return new Todo(todoData);
   }
 
-  async findAllByUser(userId: string): Promise<Todo[]> {
-    const todoData = await prisma.todo.findMany({
+  async findAllByUser(
+    userId: string,
+    filter: TodoFilter = {}
+  ): Promise<Todo[]> {
+    const query = {
       where: {
         userId,
+        ...(filter.deadlineToday && {
+          deadline: {
+            gte: dayjs().startOf('day').toDate(),
+            lte: dayjs().endOf('day').toDate(),
+          },
+        }),
+        ...(filter.completed !== undefined && { completed: filter.completed }),
+        ...(filter.priority && { priority: filter.priority }),
+        ...(filter.deadlineBefore && {
+          deadline: { lte: filter.deadlineBefore },
+        }),
+        ...(filter.deadlineAfter && {
+          deadline: { gte: filter.deadlineAfter },
+        }),
+        ...(filter.search && { title: { contains: filter.search } }),
       },
-    });
-    return todoData.map((todoData) => new Todo(todoData));
-  }
+      orderBy: [
+        filter.sortByPriority && {
+          priority: Prisma.SortOrder.desc,
+        },
+      ].filter(Boolean),
+    } as Prisma.TodoFindManyArgs;
 
+    const todoData = await prisma.todo.findMany(query);
+    return todoData.map((todo) => new Todo(todo));
+  }
   async save(todo: Todo): Promise<void> {
     await prisma.todo.update({
       where: { id: todo.id },
@@ -35,6 +61,9 @@ export class PrismaTodoRepository implements TodoRepository {
     });
   }
   async create(data: { title: string; userId: string }): Promise<Todo> {
+    const today = new Date();
+    today.setHours(23, 59, 59, 999); // 設置為今天的 23:59:59
+
     const todoData = await prisma.todo.create({
       data: {
         title: data.title,
@@ -42,6 +71,7 @@ export class PrismaTodoRepository implements TodoRepository {
         totalPomodoros: 1, // 默認需要 1 個番茄鐘
         completedPomodoros: 0, // 默認完成 0 個番茄鐘
         userId: data.userId, // 關聯到 User
+        deadline: today,
       },
     });
 
