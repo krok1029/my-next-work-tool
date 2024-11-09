@@ -22,8 +22,15 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import clsx from 'clsx';
+import { SheetTrigger } from '@/components/ui/sheet';
 
-const TodoItem = ({ todo }: { todo: Todo }) => {
+const TodoItem = ({
+  todo,
+  setSelectedTodo,
+}: {
+  todo: Todo;
+  setSelectedTodo: (todo: Todo) => void;
+}) => {
   const { id, title, completed, totalPomodoros, completedPomodoros } = todo;
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(title);
@@ -146,9 +153,11 @@ const TodoItem = ({ todo }: { todo: Todo }) => {
                 {!isEditing && <EllipsisVertical />}
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem onClick={() => setIsEditing(true)}>
-                  Edit
-                </DropdownMenuItem>
+                <SheetTrigger>
+                  <DropdownMenuItem onClick={() => setSelectedTodo(todo)}>
+                    Edit
+                  </DropdownMenuItem>
+                </SheetTrigger>
                 <DropdownMenuItem onClick={toggleCompleted} disabled={isSaving}>
                   {isCompleted ? 'Mark as Incomplete' : 'Mark as Complete'}
                 </DropdownMenuItem>
