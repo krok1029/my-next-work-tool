@@ -17,15 +17,9 @@ export async function PATCH(
   try {
     const parsedBody = await validatePayload(putTodoValidator)(req);
 
-    // 如果有 deadline，將其轉換為 Date 對象
-    const todoData = {
-      ...parsedBody,
-      deadline: parsedBody.deadline ? new Date(parsedBody.deadline) : undefined,
-    };
-
     // 提取已驗證的數據
     const updateTodoUseCase = container.resolve(UpdateTodoUseCase);
-    await updateTodoUseCase.execute(Number(id), todoData);
+    await updateTodoUseCase.execute(Number(id), parsedBody);
 
     const getTodoUseCase = container.resolve(GetTodoUseCase);
     const updatedTodo = await getTodoUseCase.execute(Number(id));

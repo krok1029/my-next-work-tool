@@ -62,7 +62,6 @@ const TodoSheet: React.FC<TodoSheetProps> = ({
     id: number,
     data: z.infer<typeof putTodoValidator>
   ) => {
-    console.log('data', data);
     try {
       const response = await fetch(`/api/todos/${id}`, {
         method: 'PATCH',
@@ -73,6 +72,7 @@ const TodoSheet: React.FC<TodoSheetProps> = ({
       });
 
       if (response.ok) {
+        setIsOpen(false);
         clearSelectedTodo();
         toast({
           title: 'Todo updated successfully',
@@ -95,7 +95,7 @@ const TodoSheet: React.FC<TodoSheetProps> = ({
   }, [selectedTodo]);
 
   const onOpenChange = (open: boolean) => {
-    setIsOpen(open);
+    setIsOpen(false);
     if (!open) {
       clearSelectedTodo();
     }
@@ -118,7 +118,7 @@ const TodoSheet: React.FC<TodoSheetProps> = ({
       )}
     />
   );
-  if (!selectedTodo) return null;
+
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
       <SheetContent>
@@ -129,116 +129,120 @@ const TodoSheet: React.FC<TodoSheetProps> = ({
           </SheetDescription>
         </SheetHeader>
 
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit((data) =>
-              onSubmit(selectedTodo.id, data)
-            )}
-            className="space-y-8 py-4"
-          >
-            {renderFormField('title', 'Title', (field) => (
-              <Input
-                id="title"
-                placeholder="Todo Title"
-                defaultValue={selectedTodo?.title}
-                {...field}
-              />
-            ))}
-            {renderFormField('completed', 'Completed', (field) => (
-              <div className="flex flex-row items-center space-x-3 space-y-0">
-                <Switch
-                  id="completed"
-                  checked={field.value}
-                  onCheckedChange={(value) => {
-                    console.log('Switch value:', value);
-                    field.onChange(value);
-                  }}
+        {selectedTodo && (
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit((data) =>
+                onSubmit(selectedTodo.id, data)
+              )}
+              className="space-y-8 py-4"
+            >
+              {renderFormField('title', 'Title', (field) => (
+                <Input
+                  id="title"
+                  placeholder="Todo Title"
+                  defaultValue={selectedTodo?.title}
+                  {...field}
                 />
-                <FormLabel htmlFor="completed">
-                  {field.value ? 'Completed' : 'Not Completed'}
-                </FormLabel>
-              </div>
-            ))}
-            {renderFormField('totalPomodoros', 'Total Pomodoros', (field) => (
-              <Input
-                {...field}
-                id="totalPomodoros"
-                placeholder="Total Pomodoros"
-                defaultValue={selectedTodo?.totalPomodoros}
-                onChange={(e) => {
-                  const value = Number(e.target.value);
-                  field.onChange(isNaN(value) ? 0 : value);
-                }}
-              />
-            ))}
-            {renderFormField(
-              'completedPomodoros',
-              'Completed Pomodoros',
-              (field) => (
+              ))}
+              {renderFormField('completed', 'Completed', (field) => (
+                <div className="flex flex-row items-center space-x-3 space-y-0">
+                  <Switch
+                    id="completed"
+                    checked={field.value}
+                    onCheckedChange={(value) => field.onChange(value)}
+                  />
+                  <FormLabel htmlFor="completed">
+                    {field.value ? 'Completed' : 'Not Completed'}
+                  </FormLabel>
+                </div>
+              ))}
+              {renderFormField('totalPomodoros', 'Total Pomodoros', (field) => (
                 <Input
                   {...field}
-                  id="completedPomodoros"
-                  placeholder="Completed Pomodoros"
-                  defaultValue={selectedTodo?.completedPomodoros}
+                  id="totalPomodoros"
+                  placeholder="Total Pomodoros"
+                  defaultValue={selectedTodo?.totalPomodoros}
                   onChange={(e) => {
                     const value = Number(e.target.value);
                     field.onChange(isNaN(value) ? 0 : value);
                   }}
                 />
-              )
-            )}
-            {renderFormField('priority', 'Priority', (field) => (
-              <Select
-                {...field}
-                onValueChange={field.onChange}
-                defaultValue={selectedTodo?.priority}
-              >
-                <SelectTrigger id="priority">
-                  <SelectValue placeholder="Select a priority" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.values(Priority).map((priority) => (
-                    <SelectItem key={priority} value={priority}>
-                      {priority}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            ))}
-            {renderFormField('deadline', 'Deadline', (field) => (
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant={'outline'}
-                    className={cn(
-                      'w-[240px] pl-3 text-left font-normal',
-                      !field.value && 'text-muted-foreground'
-                    )}
-                  >
-                    {field.value ? (
-                      format(field.value, 'PPP')
-                    ) : (
-                      <span>Pick a date</span>
-                    )}
-                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={(date) =>
-                      field.onChange(date ? new Date(date).toISOString() : null)
-                    }
-                    disabled={(date) => date < new Date()}
-                    initialFocus
+              ))}
+              {renderFormField(
+                'completedPomodoros',
+                'Completed Pomodoros',
+                (field) => (
+                  <Input
+                    {...field}
+                    id="completedPomodoros"
+                    placeholder="Completed Pomodoros"
+                    defaultValue={selectedTodo?.completedPomodoros}
+                    onChange={(e) => {
+                      const value = Number(e.target.value);
+                      field.onChange(isNaN(value) ? 0 : value);
+                    }}
                   />
-                </PopoverContent>
-              </Popover>
-            ))}
-            <Button type="submit">Submit</Button>
-          </form>
-        </Form>
+                )
+              )}
+              {renderFormField('priority', 'Priority', (field) => (
+                <Select
+                  {...field}
+                  onValueChange={field.onChange}
+                  defaultValue={selectedTodo?.priority}
+                >
+                  <SelectTrigger id="priority">
+                    <SelectValue placeholder="Select a priority" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.values(Priority).map((priority) => (
+                      <SelectItem key={priority} value={priority}>
+                        {priority}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ))}
+              {renderFormField('deadline', 'Deadline', (field) => (
+                <Popover>
+                  <div className="w-full">
+                    <PopoverTrigger asChild>
+                      <Button
+                        id="deadline"
+                        variant={'outline'}
+                        className={cn(
+                          'w-full pl-3 text-left font-normal',
+                          !field.value && 'text-muted-foreground'
+                        )}
+                      >
+                        {field.value ? (
+                          format(field.value, 'PPP')
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={(date) =>
+                          field.onChange(
+                            date ? new Date(date).toISOString() : null
+                          )
+                        }
+                        disabled={(date) => date < new Date()}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </div>
+                </Popover>
+              ))}
+              <Button type="submit">Submit</Button>
+            </form>
+          </Form>
+        )}
       </SheetContent>
     </Sheet>
   );
