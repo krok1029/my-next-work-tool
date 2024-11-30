@@ -40,8 +40,8 @@ const DraggableCard: React.FC<CardProps> = React.memo(
 
     return (
       <div className={cn(className, isDragging ? 'opacity-50' : '')}>
-        <Card className={cn('p-4 m-2')}>
-          <div ref={ref} className="cursor-move w-1/2">
+        <Card className={cn('m-2 p-4')}>
+          <div ref={ref} className="w-1/2 cursor-move">
             <GripVertical />
           </div>
           {children}

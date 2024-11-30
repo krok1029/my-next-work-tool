@@ -51,7 +51,7 @@ const NewTodos = () => {
   };
 
   return (
-    <div className="flex w-full items-center space-x-2 mb-3">
+    <div className="mb-3 flex w-full items-center space-x-2">
       <Input
         type="text"
         value={editedTitle}
@@ -61,7 +61,7 @@ const NewTodos = () => {
             handleSave();
           }
         }}
-        className="border rounded-md"
+        className="rounded-md border"
         disabled={isSaving} // 當正在保存時禁用輸入
       />
       <Button

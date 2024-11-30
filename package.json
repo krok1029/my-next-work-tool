@@ -63,6 +63,7 @@
     "eslint-config-prettier": "^9.1.0",
     "postcss": "^8",
     "prettier": "^3.4.1",
+    "prettier-plugin-tailwindcss": "^0.6.9",
     "prisma": "^5.18.0",
     "sass": "^1.77.8",
     "tailwindcss": "^3.4.1",

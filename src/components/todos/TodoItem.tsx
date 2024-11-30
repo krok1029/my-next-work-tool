@@ -108,7 +108,7 @@ const TodoItem = ({
   return (
     <div className="flex items-center gap-4">
       <Card className="my-3 flex-1">
-        <CardContent className="flex justify-between items-center py-4">
+        <CardContent className="flex items-center justify-between py-4">
           <div className="flex w-full items-center space-x-2">
             {isEditing ? (
               <Input
@@ -121,14 +121,14 @@ const TodoItem = ({
                   }
                 }}
                 onBlur={handleSave}
-                className="border border-gray-300 rounded-md"
+                className="rounded-md border border-gray-300"
                 disabled={isSaving}
                 autoFocus
               />
             ) : (
               <span
                 className={clsx(
-                  'grow shrink truncate w-0',
+                  'w-0 shrink grow truncate',
                   isCompleted && 'line-through'
                 )}
                 onClick={() => {
@@ -157,15 +157,13 @@ const TodoItem = ({
                   className="w-full"
                   onClick={() => setSelectedTodo(todo)}
                 >
-                  <SheetTrigger asChild>
-                    <Button
-                      className="w-full p-0 justify-start h-fit"
-                      variant="clear"
-                      size="sm"
-                    >
-                      Edit
-                    </Button>
-                  </SheetTrigger>
+                  <Button
+                    className="h-fit w-full justify-start p-0"
+                    variant="clear"
+                    size="sm"
+                  >
+                    Edit
+                  </Button>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={toggleCompleted} disabled={isSaving}>
                   {isCompleted ? 'Mark as Incomplete' : 'Mark as Complete'}
