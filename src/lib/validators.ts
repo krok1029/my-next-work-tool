@@ -17,10 +17,15 @@ export const putTodoValidator = z
     totalPomodoros: z.number().optional(),
     completedPomodoros: z.number().optional(),
     priority: z.enum([Priority.LOW, Priority.MEDIUM, Priority.HIGH]).optional(),
-    deadline: z.date().optional(),
+    deadline: z
+      .string()
+      .refine((dateString) => !isNaN(Date.parse(dateString)), {
+        message: 'Invalid date format',
+      })
+      .optional(),
   })
-  .refine((data) => data.title !== undefined || data.completed !== undefined, {
-    message: 'No valid fields to update',
+  .refine((data) => Object.values(data).some((value) => value !== undefined), {
+    message: 'At least one field must be updated',
     path: [],
   });
 

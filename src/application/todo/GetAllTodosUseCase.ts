@@ -20,7 +20,7 @@ export class GetAllTodosUseCase {
     }
     const userId = session.data.userId;
     return this.todoRepository.findAllByUser(userId, {
-      deadlineToday: true,
+      deadlineToday: false,
       sortByPriority: true,
     });
   }

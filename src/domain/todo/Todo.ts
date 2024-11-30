@@ -1,5 +1,5 @@
+import _ from 'lodash';
 import { Todo as PrismaTodo, Priority } from '@prisma/client';
-
 export interface TodoFilter {
   deadlineToday?: boolean;
   sortByPriority?: boolean;
@@ -18,7 +18,7 @@ export class Todo {
   public totalPomodoros: number;
   public completedPomodoros: number;
   public priority: Priority;
-  public deadline: Date;
+  public deadline: string;
 
   constructor({
     id,
@@ -36,7 +36,7 @@ export class Todo {
     this.totalPomodoros = totalPomodoros;
     this.completedPomodoros = completedPomodoros;
     this.priority = priority;
-    this.deadline = deadline;
+    this.deadline = deadline.toISOString();
   }
 
   complete() {
@@ -68,5 +68,10 @@ export class Todo {
     if (this.completedPomodoros === this.totalPomodoros) {
       this.complete();
     }
+  }
+
+  update(fields: Partial<Omit<Todo, 'id'>>) {
+    const filteredFields = _.omitBy(fields, _.isUndefined);
+    Object.assign(this, filteredFields);
   }
 }

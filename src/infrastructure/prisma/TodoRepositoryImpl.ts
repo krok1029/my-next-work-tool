@@ -57,6 +57,8 @@ export class PrismaTodoRepository implements TodoRepository {
         completed: todo.completed,
         totalPomodoros: todo.totalPomodoros,
         completedPomodoros: todo.completedPomodoros,
+        priority: todo.priority,
+        deadline: todo.deadline,
       },
     });
   }

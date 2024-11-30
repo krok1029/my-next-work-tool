@@ -22,7 +22,6 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import clsx from 'clsx';
-import { SheetTrigger } from '@/components/ui/sheet';
 
 const TodoItem = ({
   todo,
@@ -34,7 +33,6 @@ const TodoItem = ({
   const { id, title, completed, totalPomodoros, completedPomodoros } = todo;
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(title);
-  const [isCompleted, setIsCompleted] = useState(completed);
   const [isSaving, setIsSaving] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
@@ -54,8 +52,8 @@ const TodoItem = ({
       if (response.ok) {
         const updatedTodo = await response.json();
         setEditedTitle(updatedTodo.title);
-        setIsCompleted(updatedTodo.completed);
         setIsEditing(false);
+        mutate(`/api/todos`);
       } else {
         console.error('Failed to update todo');
       }
@@ -97,14 +95,6 @@ const TodoItem = ({
     }
   };
 
-  const toggleCompleted = () => {
-    if (!isSaving) {
-      const newCompletedStatus = !isCompleted;
-      setIsCompleted(newCompletedStatus); // 本地樂觀更新狀態
-      saveTodo({ completed: newCompletedStatus });
-    }
-  };
-
   return (
     <div className="flex items-center gap-4">
       <Card className="my-3 flex-1">
@@ -129,7 +119,7 @@ const TodoItem = ({
               <span
                 className={clsx(
                   'w-0 shrink grow truncate',
-                  isCompleted && 'line-through'
+                  completed && 'line-through'
                 )}
                 onClick={() => {
                   if (!isSaving) {
@@ -164,9 +154,6 @@ const TodoItem = ({
                   >
                     Edit
                   </Button>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={toggleCompleted} disabled={isSaving}>
-                  {isCompleted ? 'Mark as Incomplete' : 'Mark as Complete'}
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => setOpenDeleteDialog(true)}

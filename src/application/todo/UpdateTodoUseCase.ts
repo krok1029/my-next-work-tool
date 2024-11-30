@@ -3,28 +3,19 @@ import type { TodoRepository } from '@/domain/todo/TodoRepository';
 import { TODO } from '@/infrastructure/di/DependencyInjectionTokens';
 import { injectable, inject } from 'tsyringe';
 import '@/infrastructure/di/Container';
+import { Todo } from '@/domain/todo/Todo';
 
 @injectable()
 export class UpdateTodoUseCase {
   constructor(@inject(TODO.Repo) private todoRepository: TodoRepository) {}
 
-  async execute(
-    id: number,
-    updatedFields: { title?: string; completed?: boolean }
-  ) {
+  async execute(id: number, updatedFields: Partial<Omit<Todo, 'id'>>) {
     const todo = await this.todoRepository.findById(id);
     if (!todo) {
       throw new Error('Todo not found');
     }
 
-    if (updatedFields.title !== undefined) {
-      todo.rename(updatedFields.title);
-    }
-
-    if (updatedFields.completed !== undefined) {
-      updatedFields.completed ? todo.complete() : todo.markIncomplete();
-    }
-
+    todo.update(updatedFields);
     await this.todoRepository.save(todo);
   }
 }

@@ -62,6 +62,7 @@ const TodoSheet: React.FC<TodoSheetProps> = ({
     id: number,
     data: z.infer<typeof putTodoValidator>
   ) => {
+    console.log('data', data);
     try {
       const response = await fetch(`/api/todos/${id}`, {
         method: 'PATCH',
@@ -88,6 +89,7 @@ const TodoSheet: React.FC<TodoSheetProps> = ({
 
   useEffect(() => {
     if (selectedTodo) {
+      form.reset(selectedTodo);
       setIsOpen(true);
     }
   }, [selectedTodo]);
@@ -147,7 +149,10 @@ const TodoSheet: React.FC<TodoSheetProps> = ({
                 <Switch
                   id="completed"
                   checked={field.value}
-                  onCheckedChange={field.onChange}
+                  onCheckedChange={(value) => {
+                    console.log('Switch value:', value);
+                    field.onChange(value);
+                  }}
                 />
                 <FormLabel htmlFor="completed">
                   {field.value ? 'Completed' : 'Not Completed'}
@@ -223,7 +228,7 @@ const TodoSheet: React.FC<TodoSheetProps> = ({
                     mode="single"
                     selected={field.value}
                     onSelect={(date) =>
-                      field.onChange(date ? new Date(date) : null)
+                      field.onChange(date ? new Date(date).toISOString() : null)
                     }
                     disabled={(date) => date < new Date()}
                     initialFocus
