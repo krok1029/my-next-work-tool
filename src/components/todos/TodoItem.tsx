@@ -153,11 +153,20 @@ const TodoItem = ({
                 {!isEditing && <EllipsisVertical />}
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <SheetTrigger>
-                  <DropdownMenuItem onClick={() => setSelectedTodo(todo)}>
-                    Edit
-                  </DropdownMenuItem>
-                </SheetTrigger>
+                <DropdownMenuItem
+                  className="w-full"
+                  onClick={() => setSelectedTodo(todo)}
+                >
+                  <SheetTrigger asChild>
+                    <Button
+                      className="w-full p-0 justify-start h-fit"
+                      variant="clear"
+                      size="sm"
+                    >
+                      Edit
+                    </Button>
+                  </SheetTrigger>
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={toggleCompleted} disabled={isSaving}>
                   {isCompleted ? 'Mark as Incomplete' : 'Mark as Complete'}
                 </DropdownMenuItem>

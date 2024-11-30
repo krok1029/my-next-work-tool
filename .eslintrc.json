@@ -1,3 +1,14 @@
 {
-  "extends": "next/core-web-vitals"
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint", "unused-imports"],
+  "extends": [
+    "next/core-web-vitals",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier" // 如果你也使用 Prettier
+  ],
+  "rules": {
+    "unused-imports/no-unused-imports": "error"
+    // 其他規則...
+  }
 }

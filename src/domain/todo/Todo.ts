@@ -17,6 +17,8 @@ export class Todo {
   public completed: boolean;
   public totalPomodoros: number;
   public completedPomodoros: number;
+  public priority: Priority;
+  public deadline: Date;
 
   constructor({
     id,
@@ -24,6 +26,8 @@ export class Todo {
     completed,
     totalPomodoros,
     completedPomodoros,
+    priority,
+    deadline,
   }: PrismaTodo) {
     this;
     this.id = id;
@@ -31,6 +35,8 @@ export class Todo {
     this.completed = completed;
     this.totalPomodoros = totalPomodoros;
     this.completedPomodoros = completedPomodoros;
+    this.priority = priority;
+    this.deadline = deadline;
   }
 
   complete() {

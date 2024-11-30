@@ -39,7 +39,6 @@ export async function DELETE(
 ) {
   const { id } = params;
   try {
-
     // 提取已驗證的數據
     const deleteTodoUseCase = container.resolve(DeleteTodoUseCase);
     await deleteTodoUseCase.execute(Number(id));

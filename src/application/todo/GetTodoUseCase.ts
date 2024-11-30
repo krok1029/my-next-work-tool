@@ -6,9 +6,7 @@ import { TODO } from '@/infrastructure/di/DependencyInjectionTokens';
 
 @injectable()
 export class GetTodoUseCase {
-  constructor(
-    @inject(TODO.Repo) private todoRepository: TodoRepository
-  ) {}
+  constructor(@inject(TODO.Repo) private todoRepository: TodoRepository) {}
 
   async execute(id: number) {
     return this.todoRepository.findById(id);
