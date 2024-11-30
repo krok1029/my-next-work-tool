@@ -2,6 +2,7 @@
 import { z, ZodError } from 'zod';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { Priority } from '@prisma/client';
 
 // Todo 的驗證邏輯
 export const postTodoValidator = z.object({
@@ -13,6 +14,10 @@ export const putTodoValidator = z
   .object({
     title: z.string().optional(),
     completed: z.boolean().optional(),
+    totalPomodoros: z.number().optional(),
+    completedPomodoros: z.number().optional(),
+    priority: z.enum([Priority.LOW, Priority.MEDIUM, Priority.HIGH]).optional(),
+    deadline: z.date().optional(),
   })
   .refine((data) => data.title !== undefined || data.completed !== undefined, {
     message: 'No valid fields to update',

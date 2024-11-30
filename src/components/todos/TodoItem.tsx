@@ -105,6 +105,7 @@ const TodoItem = ({
     }
   };
 
+  console.log('todo', todo);
   return (
     <div className="flex items-center gap-4">
       <Card className="my-3 flex-1">
@@ -141,7 +142,7 @@ const TodoItem = ({
                   }
                 }}
               >
-                {editedTitle}
+                {title}
               </span>
             )}
 
