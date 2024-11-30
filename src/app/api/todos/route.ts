@@ -13,7 +13,6 @@ export async function GET() {
 
     return NextResponse.json(todos);
   } catch (error) {
-    console.error('Error fetching todos:', error);
     return NextResponse.json(
       { message: 'Failed to fetch todos' },
       { status: 500 }
@@ -34,7 +33,6 @@ export async function POST(req: NextRequest) {
     // 返回新創建的 Todo 數據
     return NextResponse.json(newTodo, { status: 201 }); // 返回 201 創建成功狀態
   } catch (error) {
-    console.error(error);
     return NextResponse.json(
       { message: 'Failed to create todo' },
       { status: 500 }

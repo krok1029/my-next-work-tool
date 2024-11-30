@@ -10,10 +10,8 @@ export async function signOut() {
     const signOutUserUseCase = container.resolve(SignOutUserUseCase);
 
     const res = await signOutUserUseCase.execute();
-    console.log('res:', res);
     return { success: true, message: 'User signOut successfully' };
   } catch (error: any) {
-    console.log('error:', error);
     return { success: false, message: error.message };
   }
 }

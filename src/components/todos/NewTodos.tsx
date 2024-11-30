@@ -27,7 +27,6 @@ const NewTodos = () => {
 
       if (response.ok) {
         const newTodo = await response.json();
-        console.log('New Todo created:', newTodo);
         setEditedTitle(''); // 重置輸入框
         mutate('/api/todos');
       } else {

@@ -6,6 +6,7 @@ import { UpdateTodoUseCase } from '@/application/todo/UpdateTodoUseCase';
 import { GetTodoUseCase } from '@/application/todo/GetTodoUseCase';
 import { DeleteTodoUseCase } from '@/application/todo/DeleteTodoUseCase';
 import { putTodoValidator, validatePayload } from '@/lib/validators';
+import { ZodError } from 'zod';
 
 export async function PATCH(
   req: NextRequest,
@@ -25,7 +26,9 @@ export async function PATCH(
 
     return NextResponse.json(updatedTodo, { status: 200 });
   } catch (error) {
-    console.error(error);
+    if (error instanceof ZodError) {
+      return NextResponse.json({ message: error.errors }, { status: 400 });
+    }
     return NextResponse.json(
       { message: 'Failed to update todo' },
       { status: 500 }
@@ -48,9 +51,11 @@ export async function DELETE(
 
     return NextResponse.json(updatedTodo, { status: 200 });
   } catch (error) {
-    console.error(error);
+    if (error instanceof ZodError) {
+      return NextResponse.json({ message: error.errors }, { status: 400 });
+    }
     return NextResponse.json(
-      { message: 'Failed to update todo' },
+      { message: 'Failed to delete todo' },
       { status: 500 }
     );
   }

@@ -9,7 +9,6 @@ export class SignInUserUseCase {
 
   async execute(email: string, password: string) {
     const { data, error } = await this.authService.signIn(email, password);
-    console.log('data:', data);
     if (error) {
       throw new Error(error.message);
     }

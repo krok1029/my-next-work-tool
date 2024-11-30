@@ -46,7 +46,6 @@ export class SupabaseAuthService implements AuthService {
     try {
       const { data } = await supabase.auth.getUser();
       const { user } = data;
-      console.log('data:::', data);
 
       if (!user) {
         return { success: true, data: null };

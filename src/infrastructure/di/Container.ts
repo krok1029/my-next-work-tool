@@ -18,11 +18,8 @@ import { SignUpUserUseCase } from '@/application/auth/SignUpUserUseCase';
 import { UserRepository } from '@/domain/user/UserRepository';
 import { PrismaUserRepository } from '@/infrastructure/prisma/UserRepositoryImpl';
 
-console.log('Container initialized');
-
 // 註冊 Todo
 if (!container.isRegistered(TODO.Repo)) {
-  console.log('Registering Todo Repo');
   container.register<TodoRepository>(TODO.Repo, {
     useClass: PrismaTodoRepository,
   });
@@ -41,7 +38,6 @@ if (!container.isRegistered(TODO.Repo)) {
 }
 
 if (!container.isRegistered(USER.Repo)) {
-  console.log('Registering User Repo');
   // 註冊 User
   container.register<UserRepository>(USER.Repo, {
     useClass: PrismaUserRepository,
@@ -49,7 +45,6 @@ if (!container.isRegistered(USER.Repo)) {
 }
 
 if (!container.isRegistered(AUTH.Service)) {
-  console.log('Registering Auth Service');
   // 註冊 Auth
   container.register(AUTH.Service, { useClass: SupabaseAuthService });
   container.register(AUTH.SignIn, { useClass: SignInUserUseCase });

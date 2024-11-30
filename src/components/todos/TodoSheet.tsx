@@ -62,7 +62,6 @@ const TodoSheet: React.FC<TodoSheetProps> = ({
     id: number,
     data: z.infer<typeof putTodoValidator>
   ) => {
-    console.log(data);
     try {
       const response = await fetch(`/api/todos/${id}`, {
         method: 'PATCH',
@@ -73,7 +72,6 @@ const TodoSheet: React.FC<TodoSheetProps> = ({
       });
 
       if (response.ok) {
-        console.log('success');
         clearSelectedTodo();
         toast({
           title: 'Todo updated successfully',
@@ -158,6 +156,7 @@ const TodoSheet: React.FC<TodoSheetProps> = ({
             ))}
             {renderFormField('totalPomodoros', 'Total Pomodoros', (field) => (
               <Input
+                {...field}
                 id="totalPomodoros"
                 placeholder="Total Pomodoros"
                 defaultValue={selectedTodo?.totalPomodoros}
@@ -165,7 +164,6 @@ const TodoSheet: React.FC<TodoSheetProps> = ({
                   const value = Number(e.target.value);
                   field.onChange(isNaN(value) ? 0 : value);
                 }}
-                {...field}
               />
             ))}
             {renderFormField(
@@ -173,6 +171,7 @@ const TodoSheet: React.FC<TodoSheetProps> = ({
               'Completed Pomodoros',
               (field) => (
                 <Input
+                  {...field}
                   id="completedPomodoros"
                   placeholder="Completed Pomodoros"
                   defaultValue={selectedTodo?.completedPomodoros}
@@ -180,7 +179,6 @@ const TodoSheet: React.FC<TodoSheetProps> = ({
                     const value = Number(e.target.value);
                     field.onChange(isNaN(value) ? 0 : value);
                   }}
-                  {...field}
                 />
               )
             )}
@@ -224,7 +222,9 @@ const TodoSheet: React.FC<TodoSheetProps> = ({
                   <Calendar
                     mode="single"
                     selected={field.value}
-                    onSelect={field.onChange}
+                    onSelect={(date) =>
+                      field.onChange(date ? new Date(date) : null)
+                    }
                     disabled={(date) => date < new Date()}
                     initialFocus
                   />

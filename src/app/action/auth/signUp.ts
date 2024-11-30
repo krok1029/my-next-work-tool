@@ -32,7 +32,6 @@ export async function signUp(data: FormData) {
       email: formValues.email,
       name: `${formValues.firstName} ${formValues.lastName}`,
     });
-    console.log('user', newUser);
     return { success: true, message: 'User created successfully' };
   } catch (error: any) {
     return { success: false, message: error.message };

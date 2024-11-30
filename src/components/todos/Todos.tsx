@@ -13,7 +13,6 @@ const Todos = () => {
   if (isLoading) return;
 
   if (error) return <p className="text-red-500">Error fetching todos</p>;
-  console.log('todos', todos);
   return (
     <div className="p-4">
       <NewTodos />

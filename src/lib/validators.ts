@@ -58,7 +58,7 @@ export function validatePayload<T>(schema: z.ZodType<T>) {
       return schema.parse(body);
     } catch (error) {
       if (error instanceof ZodError) {
-        throw NextResponse.json({ errors: error.errors }, { status: 400 });
+        throw error;
       }
       throw NextResponse.json({ error: 'Invalid request' }, { status: 400 });
     }

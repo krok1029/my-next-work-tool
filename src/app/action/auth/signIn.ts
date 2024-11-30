@@ -11,7 +11,6 @@ export async function signIn(data: FormData) {
     email: data.get('email')?.toString() ?? '',
     password: data.get('password')?.toString() ?? '',
   };
-  console.log('formValues:', formValues);
   try {
     signInSchema.parse(formValues);
 
@@ -21,10 +20,8 @@ export async function signIn(data: FormData) {
       formValues.email,
       formValues.password
     );
-    console.log('res:', res);
     return { success: true, message: 'User signin successfully' };
   } catch (error: any) {
-    console.log('error:', error);
     return { success: false, message: error.message };
   }
 }

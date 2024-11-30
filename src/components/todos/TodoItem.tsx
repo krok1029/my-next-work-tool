@@ -80,7 +80,7 @@ const TodoItem = ({
         method: 'DELETE',
       });
       if (response.ok) {
-        console.log('Todo deleted successfully');
+        mutate('/api/todos');
       } else {
         console.error('Failed to delete todo');
       }
@@ -105,7 +105,6 @@ const TodoItem = ({
     }
   };
 
-  console.log('todo', todo);
   return (
     <div className="flex items-center gap-4">
       <Card className="my-3 flex-1">
