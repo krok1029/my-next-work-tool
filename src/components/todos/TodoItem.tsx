@@ -24,10 +24,15 @@ import clsx from 'clsx';
 import { cn } from '@/lib/utils';
 import { useTodoStore } from '@/lib/zustandStore';
 
-const TodoItem = ({ todo }: { todo: Todo }) => {
+const TodoItem = ({
+  todo,
+  setIsOpen,
+}: {
+  todo: Todo;
+  setIsOpen: (open: boolean) => void;
+}) => {
   const { id, title, completed, totalPomodoros, completedPomodoros } = todo;
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const [active, setActive] = useState(false);
   const { selectedTodo, setSelectedTodo } = useTodoStore();
   const deleteTodo = async () => {
     try {
@@ -54,12 +59,12 @@ const TodoItem = ({ todo }: { todo: Todo }) => {
     <div className="flex items-center gap-4">
       <Card
         className="my-3 flex-1 cursor-pointer"
-        onClick={() => setActive((p) => !p)}
+        onClick={() => setSelectedTodo(todo)}
       >
         <CardContent
           className={cn(
             'flex items-center justify-between py-4',
-            active && 'bg-primary-foreground'
+            selectedTodo?.id === todo.id && 'bg-primary-foreground'
           )}
         >
           <div className="flex w-full items-center space-x-2">
@@ -81,7 +86,10 @@ const TodoItem = ({ todo }: { todo: Todo }) => {
               <DropdownMenuContent>
                 <DropdownMenuItem
                   className="w-full"
-                  onClick={() => setSelectedTodo(todo)}
+                  onClick={() => {
+                    setSelectedTodo(todo);
+                    setIsOpen(true);
+                  }}
                 >
                   <Button
                     className="h-fit w-full justify-start p-0"
