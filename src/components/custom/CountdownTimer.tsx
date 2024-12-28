@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Label,
   PolarGrid,
@@ -24,44 +24,77 @@ const chartConfig = {
 
 export default function CountdownTimer() {
   const { data: user, isLoading } = useFetch<User>('/api/user');
-
-  const duration = user ? user.workDuration * 60 : 0 * 60;
-  const [timeLeft, setTimeLeft] = useState<number>(duration);
+  const workDurationInSeconds = useMemo(
+    () => (user ? user.workDuration * 60 : 0),
+    [user]
+  );
+  const breakDurationInSeconds = useMemo(
+    () => (user ? user.breakDuration * 60 : 0),
+    [user]
+  );
+  const [timeLeft, setTimeLeft] = useState<number>(workDurationInSeconds);
   const [isRunning, setIsRunning] = useState<boolean>(false);
+  const [status, setStatus] = useState<'WORK' | 'BREAK'>('WORK');
 
   useEffect(() => {
-    if (!isRunning) return;
+    let interval: NodeJS.Timeout | null = null;
 
-    const interval = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+    if (isRunning) {
+      interval = setInterval(() => {
+        setTimeLeft((prev) => Math.max(prev - 1, 0));
+      }, 1000);
+    }
 
-    return () => clearInterval(interval);
-  }, [isRunning]);
+    if (timeLeft === 0 && interval) {
+      clearInterval(interval);
+      setIsRunning(false);
+      handleNextPhase();
+    }
 
-  if (isLoading) {
-    return;
-  }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isRunning, timeLeft]);
+
+  const handleNextPhase = () => {
+    if (status === 'WORK') {
+      setStatus('BREAK');
+      setTimeLeft(breakDurationInSeconds);
+    } else {
+      setStatus('WORK');
+      setTimeLeft(workDurationInSeconds);
+    }
+    setIsRunning(true);
+  };
 
   const resetTimer = () => {
-    setTimeLeft(duration);
+    setTimeLeft(workDurationInSeconds);
+    setStatus('WORK');
     setIsRunning(false);
   };
 
   const formattedTime = secondTimeFormatter(timeLeft);
-
-  const percentage = (timeLeft / duration) * 100;
+  const percentage =
+    timeLeft > 0
+      ? (timeLeft /
+          (status === 'WORK'
+            ? workDurationInSeconds
+            : breakDurationInSeconds)) *
+        100
+      : 0;
   const dynamicEndAngle = 90 - (percentage * 360) / 100;
 
   const chartData = [
-    { name: 'Time Left', visitors: percentage, fill: 'var(--color-default)' },
+    {
+      name: status === 'WORK' ? 'Work' : 'Break',
+      visitors: percentage,
+      fill: status === 'WORK' ? 'var(--color-default)' : 'hsl(var(--chart-3))',
+    },
   ];
+
+  if (isLoading || !user) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>

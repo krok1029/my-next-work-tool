@@ -1,6 +1,6 @@
 {
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint", "unused-imports"],
+  "plugins": ["@typescript-eslint", "unused-imports", "react", "react-hooks"],
   "extends": [
     "next/core-web-vitals",
     "eslint:recommended",
@@ -8,7 +8,12 @@
     "prettier" // 如果你也使用 Prettier
   ],
   "rules": {
-    "unused-imports/no-unused-imports": "error"
+    "unused-imports/no-unused-imports": "error",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
     // 其他規則...
+  },
+  "parserOptions": {
+    "project": "./tsconfig.json"
   }
 }
