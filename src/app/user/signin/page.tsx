@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'; //
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { signIn } from '@/app/action/auth/signIn';
+import { demoSignIn, signIn } from '@/app/action/auth/signIn';
 import { useToast } from '@/hooks/use-toast';
 
 function LoginForm() {
@@ -15,22 +15,34 @@ function LoginForm() {
   const { toast } = useToast();
   const router = useRouter(); // 使用 useRouter 進行導航
 
+  const handleResult = (result: { success: boolean; message: any }) => {
+    if (result?.success) {
+      toast({
+        description: result.message,
+      });
+      router.push('/dashboard');
+    } else {
+      toast({
+        variant: 'destructive',
+        description: result.message,
+      });
+    }
+  };
+
   const handleSubmit = async (formData: FormData) => {
     startTransition(async () => {
       const result = await signIn(formData);
-      if (result?.success) {
-        toast({
-          description: result.message,
-        });
-        router.push('/dashboard');
-      } else {
-        toast({
-          variant: 'destructive',
-          description: result.message,
-        });
-      }
+      handleResult(result);
     });
   };
+
+  const handleDemoLogin = () => {
+    startTransition(async () => {
+      const result = await demoSignIn();
+      handleResult(result);
+    });
+  };
+
   return (
     <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
       <div className="flex items-center justify-center py-12">
@@ -67,6 +79,13 @@ function LoginForm() {
               </div>
               <Button type="submit" className="w-full">
                 {isPending ? 'Logining...' : 'Login'}
+              </Button>
+              <Button
+                type="button"
+                className="w-full"
+                onClick={handleDemoLogin}
+              >
+                {isPending ? 'Logining...' : 'Login with Demo Account'}
               </Button>
             </div>
             <div className="mt-4 text-center text-sm">

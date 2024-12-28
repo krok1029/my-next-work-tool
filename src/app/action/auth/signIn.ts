@@ -25,3 +25,23 @@ export async function signIn(data: FormData) {
     return { success: false, message: error.message };
   }
 }
+
+export async function demoSignIn() {
+  const formValues: Record<string, string> = {
+    email: process.env.DEMO_ACCOUNT!,
+    password: process.env.DEMO_PASSWORD!,
+  };
+  try {
+    signInSchema.parse(formValues);
+
+    const signInUserUseCase = container.resolve(SignInUserUseCase);
+
+    const res = await signInUserUseCase.execute(
+      formValues.email,
+      formValues.password
+    );
+    return { success: true, message: 'User signin successfully' };
+  } catch (error: any) {
+    return { success: false, message: error.message };
+  }
+}
