@@ -2,10 +2,9 @@
 
 import { useState } from 'react';
 import { mutate } from 'swr';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Todo } from '@/domain/todo/Todo';
+import { Todo } from '@prisma/client';
 import { EllipsisVertical } from 'lucide-react';
 import {
   DropdownMenu,
@@ -22,56 +21,14 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import clsx from 'clsx';
+import { cn } from '@/lib/utils';
+import { useTodoStore } from '@/lib/zustandStore';
 
-const TodoItem = ({
-  todo,
-  setSelectedTodo,
-}: {
-  todo: Todo;
-  setSelectedTodo: (todo: Todo) => void;
-}) => {
+const TodoItem = ({ todo }: { todo: Todo }) => {
   const { id, title, completed, totalPomodoros, completedPomodoros } = todo;
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedTitle, setEditedTitle] = useState(title);
-  const [isSaving, setIsSaving] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-
-  const saveTodo = async (
-    updatedFields: Partial<{ title: string; completed: boolean }>
-  ) => {
-    setIsSaving(true);
-    try {
-      const response = await fetch(`/api/todos/${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedFields),
-      });
-
-      if (response.ok) {
-        const updatedTodo = await response.json();
-        setEditedTitle(updatedTodo.title);
-        setIsEditing(false);
-        mutate(`/api/todos`);
-      } else {
-        console.error('Failed to update todo');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    } finally {
-      setIsSaving(false); // 保存完成，取消加載狀態
-    }
-  };
-
-  const handleSave = async () => {
-    if (!isSaving && editedTitle !== title) {
-      await saveTodo({ title: editedTitle });
-      mutate('/api/todos');
-    }
-    setIsEditing(false);
-  };
-
+  const [active, setActive] = useState(false);
+  const { selectedTodo, setSelectedTodo } = useTodoStore();
   const deleteTodo = async () => {
     try {
       const response = await fetch(`/api/todos/${id}`, {
@@ -88,59 +45,38 @@ const TodoItem = ({
   };
 
   const handleDelete = async () => {
-    if (!isSaving) {
-      await deleteTodo();
-      mutate('/api/todos');
-      setOpenDeleteDialog(false);
-    }
+    await deleteTodo();
+    mutate('/api/todos');
+    setOpenDeleteDialog(false);
   };
 
   return (
     <div className="flex items-center gap-4">
-      <Card className="my-3 flex-1">
-        <CardContent className="flex items-center justify-between py-4">
+      <Card
+        className="my-3 flex-1 cursor-pointer"
+        onClick={() => setActive((p) => !p)}
+      >
+        <CardContent
+          className={cn(
+            'flex items-center justify-between py-4',
+            active && 'bg-primary-foreground'
+          )}
+        >
           <div className="flex w-full items-center space-x-2">
-            {isEditing ? (
-              <Input
-                type="text"
-                value={editedTitle}
-                onChange={(e) => setEditedTitle(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === 'Escape') {
-                    handleSave();
-                  }
-                }}
-                onBlur={handleSave}
-                className="rounded-md border border-gray-300"
-                disabled={isSaving}
-                autoFocus
-              />
-            ) : (
-              <span
-                className={clsx(
-                  'w-0 shrink grow truncate',
-                  completed && 'line-through'
-                )}
-                onClick={() => {
-                  if (!isSaving) {
-                    if (isEditing) {
-                      handleSave();
-                    } else {
-                      setIsEditing(true);
-                    }
-                  }
-                }}
-              >
-                {title}
-              </span>
-            )}
+            <span
+              className={clsx(
+                'w-0 shrink grow truncate',
+                completed && 'line-through'
+              )}
+              onClick={() => {}}
+            >
+              {title}
+            </span>
 
-            {!isEditing && (
-              <span className="text-nowrap">{`${completedPomodoros} / ${totalPomodoros}`}</span>
-            )}
+            <span className="text-nowrap">{`${completedPomodoros} / ${totalPomodoros}`}</span>
             <DropdownMenu modal={false}>
               <DropdownMenuTrigger>
-                {!isEditing && <EllipsisVertical />}
+                <EllipsisVertical />
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuItem
@@ -155,10 +91,7 @@ const TodoItem = ({
                     Edit
                   </Button>
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => setOpenDeleteDialog(true)}
-                  disabled={isSaving}
-                >
+                <DropdownMenuItem onClick={() => setOpenDeleteDialog(true)}>
                   Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>

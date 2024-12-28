@@ -43,18 +43,11 @@ import {
 } from '@/components/ui/popover';
 import { mutate } from 'swr';
 import { toast } from '@/hooks/use-toast';
+import { useTodoStore } from '@/lib/zustandStore';
 
-interface TodoSheetProps {
-  selectedTodo: Todo | null;
-  clearSelectedTodo: () => void;
-}
-
-const TodoSheet: React.FC<TodoSheetProps> = ({
-  selectedTodo,
-  clearSelectedTodo,
-}) => {
+const TodoSheet: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-
+  const { selectedTodo, clearSelectedTodo } = useTodoStore();
   const form = useForm<z.infer<typeof putTodoValidator>>({
     resolver: zodResolver(putTodoValidator),
   });
@@ -90,8 +83,7 @@ const TodoSheet: React.FC<TodoSheetProps> = ({
 
   useEffect(() => {
     if (selectedTodo) {
-      form.reset(selectedTodo);
-      setIsOpen(true);
+      setIsOpen(!!selectedTodo);
     }
   }, [selectedTodo]);
 
