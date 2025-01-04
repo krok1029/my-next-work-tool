@@ -19,7 +19,9 @@ const Todos = () => {
       <div className="max-h-72 overflow-y-auto">
         {todos &&
           todos.map((todo) => (
-            <TodoItem key={todo.id} todo={todo} setIsOpen={setIsOpen} />
+            <div key={todo.id}>
+              <TodoItem todo={todo} setIsOpen={setIsOpen} />
+            </div>
           ))}
       </div>
       <TodoSheet isOpen={isOpen} setIsOpen={setIsOpen} />

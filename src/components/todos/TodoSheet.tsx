@@ -111,7 +111,6 @@ const TodoSheet: React.FC<{
         <Input
           id="title"
           placeholder="Todo Title"
-          defaultValue={selectedTodo?.title}
           {...field}
         />
       ),
@@ -140,7 +139,6 @@ const TodoSheet: React.FC<{
           {...field}
           id="totalPomodoros"
           placeholder="Total Pomodoros"
-          defaultValue={selectedTodo?.totalPomodoros}
           onChange={(e) => {
             const value = Number(e.target.value);
             field.onChange(isNaN(value) ? 0 : value);
@@ -156,7 +154,6 @@ const TodoSheet: React.FC<{
           {...field}
           id="completedPomodoros"
           placeholder="Completed Pomodoros"
-          defaultValue={selectedTodo?.completedPomodoros}
           onChange={(e) => {
             const value = Number(e.target.value);
             field.onChange(isNaN(value) ? 0 : value);
@@ -246,6 +243,7 @@ const TodoSheet: React.FC<{
             >
               {inputs.map((input) => (
                 <FormField
+                  key={input.name}
                   control={form.control}
                   name={input.name}
                   render={({ field }) => (
