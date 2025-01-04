@@ -94,6 +94,7 @@ export default function CountdownTimer() {
       });
 
       if (selectedTodo.completedPomodoros + 1 >= selectedTodo.totalPomodoros) {
+        resetTimer();
         return;
       }
       setStatus(State.Break);
