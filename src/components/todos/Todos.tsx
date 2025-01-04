@@ -16,7 +16,7 @@ const Todos = () => {
   return (
     <div className="p-4">
       <NewTodos />
-      <div className="max-h-80 overflow-y-auto">
+      <div className="max-h-72 overflow-y-auto">
         {todos &&
           todos.map((todo) => (
             <TodoItem key={todo.id} todo={todo} setIsOpen={setIsOpen} />
