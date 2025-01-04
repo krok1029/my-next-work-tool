@@ -20,7 +20,7 @@ export default function Dashboard() {
     <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
       {defaultCards.map((card) => (
         <div className={cn(card.className, "h-96")}>
-          <Card className={cn('h-full')}>{card.element}</Card>
+          <Card className={cn('h-full p-3')}>{card.element}</Card>
         </div>
       ))}
     </div>

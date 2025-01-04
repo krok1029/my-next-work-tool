@@ -33,7 +33,7 @@ const TodoItem = ({
 }) => {
   const { id, title, completed, totalPomodoros, completedPomodoros } = todo;
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const { selectedTodo, setSelectedTodo, isInProgress } = useTodoStore();
+  const { selectedTodo, setSelectedTodo, clearSelectedTodo, isInProgress } = useTodoStore();
   const deleteTodo = async () => {
     try {
       const response = await fetch(`/api/todos/${id}`, {
@@ -41,6 +41,7 @@ const TodoItem = ({
       });
       if (response.ok) {
         mutate('/api/todos');
+        clearSelectedTodo()
       } else {
         console.error('Failed to delete todo');
       }

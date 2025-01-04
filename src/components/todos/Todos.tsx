@@ -17,12 +17,9 @@ const Todos = () => {
     <div className="p-4">
       <NewTodos />
       <div className="max-h-72 overflow-y-auto">
-        {todos &&
-          todos.map((todo) => (
-            <div key={todo.id}>
-              <TodoItem todo={todo} setIsOpen={setIsOpen} />
-            </div>
-          ))}
+        {todos?.map((todo) => (
+          <TodoItem key={todo.id} todo={todo} setIsOpen={setIsOpen} />
+        ))}
       </div>
       <TodoSheet isOpen={isOpen} setIsOpen={setIsOpen} />
     </div>
