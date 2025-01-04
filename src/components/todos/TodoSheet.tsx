@@ -54,6 +54,15 @@ const TodoSheet: React.FC<{
     resolver: zodResolver(putTodoValidator),
   });
 
+  useEffect(() => {
+    if (!!selectedTodo) {
+      form.reset({
+        ...selectedTodo,
+        deadline: String(selectedTodo.deadline)
+      });
+    }
+  }, [selectedTodo]);
+
   const onSubmit = async (
     id: number,
     data: z.infer<typeof putTodoValidator>
@@ -75,6 +84,7 @@ const TodoSheet: React.FC<{
           description: 'Your todo has been updated',
         });
         mutate('/api/todos');
+        form.reset();
       } else {
         console.error('Failed to update todo');
       }
@@ -82,6 +92,7 @@ const TodoSheet: React.FC<{
       console.error('Error updating todo:', error);
     }
   };
+
   const onOpenChange = (open: boolean) => {
     setIsOpen(false);
     if (!open) {
