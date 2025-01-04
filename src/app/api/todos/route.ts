@@ -10,7 +10,7 @@ export async function GET() {
   try {
     const getAllTodosUseCase = container.resolve(GetAllTodosUseCase);
     const todos = await getAllTodosUseCase.execute();
-
+    
     return NextResponse.json(todos);
   } catch (error) {
     return NextResponse.json(
