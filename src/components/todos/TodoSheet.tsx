@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   Sheet,
   SheetContent,
@@ -8,10 +8,9 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
-import { Todo } from '@/domain/todo/Todo';
 import { putTodoValidator } from '@/lib/validators';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ControllerRenderProps, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import {
@@ -58,7 +57,7 @@ const TodoSheet: React.FC<{
     if (!!selectedTodo) {
       form.reset({
         ...selectedTodo,
-        deadline: String(selectedTodo.deadline)
+        deadline: String(selectedTodo.deadline),
       });
     }
   }, [selectedTodo]);
