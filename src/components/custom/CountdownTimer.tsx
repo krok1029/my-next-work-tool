@@ -14,7 +14,9 @@ import { Button } from '@/components/ui/button';
 import { CardFooter } from '../ui/card';
 import useFetch from '@/hooks/use-fetch';
 import { User } from '@/domain/user/User';
+import { useTodoStore } from '@/lib/zustandStore';
 import { Pause, Play, RotateCcw } from 'lucide-react';
+import { mutate } from 'swr';
 
 const chartConfig = {
   default: {
@@ -33,13 +35,19 @@ export default function CountdownTimer() {
     [user]
   );
   const [timeLeft, setTimeLeft] = useState<number>(workDurationInSeconds);
-  const [isRunning, setIsRunning] = useState<boolean>(false);
   const [status, setStatus] = useState<'WORK' | 'BREAK'>('WORK');
+  const {
+    selectedTodo,
+    setSelectedTodo,
+    startProgress,
+    stopProgress,
+    isInProgress,
+  } = useTodoStore();
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
 
-    if (isRunning) {
+    if (isInProgress) {
       interval = setInterval(() => {
         setTimeLeft((prev) => Math.max(prev - 1, 0));
       }, 1000);
@@ -47,30 +55,71 @@ export default function CountdownTimer() {
 
     if (timeLeft === 0 && interval) {
       clearInterval(interval);
-      setIsRunning(false);
+      stopProgress();
       handleNextPhase();
     }
 
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isRunning, timeLeft]);
+  }, [isInProgress, timeLeft]);
 
-  const handleNextPhase = () => {
+  useEffect(() => {
+    if (selectedTodo) {
+      setStatus('WORK');
+      setTimeLeft(workDurationInSeconds);
+    }
+  }, [selectedTodo?.id]);
+
+  const handleNextPhase = async () => {
+    if (!selectedTodo) {
+      return;
+    }
     if (status === 'WORK') {
+      await handleConsumePomodoro();
+      setSelectedTodo({
+        ...selectedTodo,
+        completedPomodoros: selectedTodo.completedPomodoros + 1,
+      });
+
+      if (selectedTodo.completedPomodoros + 1 >= selectedTodo.totalPomodoros) {
+        return;
+      }
       setStatus('BREAK');
       setTimeLeft(breakDurationInSeconds);
     } else {
       setStatus('WORK');
       setTimeLeft(workDurationInSeconds);
     }
-    setIsRunning(true);
+    startProgress();
   };
 
   const resetTimer = () => {
     setTimeLeft(workDurationInSeconds);
     setStatus('WORK');
-    setIsRunning(false);
+    stopProgress();
+  };
+
+  const handleConsumePomodoro = async () => {
+    try {
+      const response = await fetch(
+        `/api/todos/${selectedTodo?.id}/consume_pomodoro`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (response.ok) {
+        mutate('/api/todos');
+      } else {
+        console.error('Failed to consume pomodoro');
+      }
+    } catch (error) {
+      console.error('Error Failed to consume pomodoro:', error);
+    }
   };
 
   const formattedTime = secondTimeFormatter(timeLeft);
@@ -143,22 +192,42 @@ export default function CountdownTimer() {
           </PolarRadiusAxis>
         </RadialBarChart>
       </ChartContainer>
-      <CardFooter className="justify-center">
-        <div className="flex gap-2">
-          {isRunning ? (
-            <Button variant="outline" onClick={() => setIsRunning(false)}>
-              <Pause />
-            </Button>
-          ) : (
-            <Button variant="outline" onClick={() => setIsRunning(true)}>
-              <Play />
-            </Button>
-          )}
-          <Button variant="outline" onClick={resetTimer}>
-            <RotateCcw />
-          </Button>
-        </div>
-      </CardFooter>
+      {!!selectedTodo && (
+        <CardFooter className="justify-center">
+          <div>
+            <div className="px-3 text-center text-lg">{selectedTodo.title}</div>
+            <div className="px-3 pb-1 text-center text-sm text-gray-500">
+              {status === 'WORK' ? 'Task progressing' : 'That take a break ☕️'}
+            </div>
+            <div className="flex gap-2">
+              {isInProgress ? (
+                <Button
+                  variant="outline"
+                  onClick={stopProgress}
+                  disabled={!selectedTodo}
+                >
+                  <Pause />
+                </Button>
+              ) : (
+                <Button
+                  variant="outline"
+                  onClick={startProgress}
+                  disabled={!selectedTodo || selectedTodo.completed}
+                >
+                  <Play />
+                </Button>
+              )}
+              <Button
+                variant="outline"
+                onClick={resetTimer}
+                disabled={!selectedTodo}
+              >
+                <RotateCcw />
+              </Button>
+            </div>
+          </div>
+        </CardFooter>
+      )}
     </>
   );
 }

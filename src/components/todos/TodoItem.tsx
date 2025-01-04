@@ -33,7 +33,7 @@ const TodoItem = ({
 }) => {
   const { id, title, completed, totalPomodoros, completedPomodoros } = todo;
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const { selectedTodo, setSelectedTodo } = useTodoStore();
+  const { selectedTodo, setSelectedTodo, isInProgress } = useTodoStore();
   const deleteTodo = async () => {
     try {
       const response = await fetch(`/api/todos/${id}`, {
@@ -58,8 +58,15 @@ const TodoItem = ({
   return (
     <div className="flex items-center gap-4">
       <Card
-        className="my-3 flex-1 cursor-pointer"
-        onClick={() => setSelectedTodo(todo)}
+        className={cn(
+          'my-3 flex-1',
+          isInProgress ? 'cursor-not-allowed' : 'cursor-pointer'
+        )}
+        onClick={() => {
+          if (!isInProgress) {
+            setSelectedTodo(todo);
+          }
+        }}
       >
         <CardContent
           className={cn(
@@ -87,8 +94,12 @@ const TodoItem = ({
                 <DropdownMenuItem
                   className="w-full"
                   onClick={() => {
-                    setSelectedTodo(todo);
-                    setIsOpen(true);
+                    if (isInProgress) {
+                      // go to edit page
+                    } else {
+                      setSelectedTodo(todo);
+                      setIsOpen(true);
+                    }
                   }}
                 >
                   <Button

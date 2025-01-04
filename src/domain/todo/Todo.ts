@@ -46,20 +46,6 @@ export class Todo {
     this.completed = true;
   }
 
-  markIncomplete() {
-    if (!this.completed) {
-      throw new Error('Todo is not completed yet');
-    }
-    this.completed = false;
-  }
-
-  rename(newTitle: string) {
-    if (!newTitle.trim()) {
-      throw new Error('Title cannot be empty');
-    }
-    this.title = newTitle;
-  }
-
   consumePomodoro() {
     if (this.completedPomodoros >= this.totalPomodoros) {
       throw new Error('Todo is already completed');

@@ -5,6 +5,7 @@ export enum TODO {
   Update = 'UpdateTodoUseCase',
   GetAll = 'GetAllTodosUseCase',
   Get = 'GetTodoUseCase',
+  CompletedPomodoros = "CompletedPomodoros"
 }
 export enum AUTH {
   Service = 'AuthService',

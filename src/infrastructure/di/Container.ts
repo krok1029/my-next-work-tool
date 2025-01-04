@@ -9,6 +9,7 @@ import {
 import { PrismaTodoRepository } from '@/infrastructure/prisma/TodoRepositoryImpl';
 import { CreateTodoUseCase } from '@/application/todo/CreateTodoUseCase';
 import { UpdateTodoUseCase } from '@/application/todo/UpdateTodoUseCase';
+import { ConsumePomodoroUseCase } from '@/application/todo/ConsumePomodoroUseCase';
 import { GetAllTodosUseCase } from '@/application/todo/GetAllTodosUseCase';
 import { GetTodoUseCase } from '@/application/todo/GetTodoUseCase';
 import { TodoRepository } from '@/domain/todo/TodoRepository';
@@ -34,6 +35,9 @@ if (!container.isRegistered(TODO.Repo)) {
   });
   container.register(TODO.Get, {
     useClass: GetTodoUseCase,
+  });
+  container.register(TODO.CompletedPomodoros, {
+    useClass: ConsumePomodoroUseCase,
   });
 }
 
