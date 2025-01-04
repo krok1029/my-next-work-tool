@@ -1,4 +1,4 @@
-import CountdownTimer from '@/components/custom/CountdownTimer';
+import CountdownTimer from '@/app/dashboard/CountdownTimer';
 import React from 'react';
 import ClientDashboard from '@/components/ClientDashboard';
 import Todos from '@/components/todos/Todos';

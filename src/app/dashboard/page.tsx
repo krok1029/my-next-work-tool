@@ -1,9 +1,8 @@
-import CountdownTimer from '@/components/custom/CountdownTimer';
+import CountdownTimer from '@/app/dashboard/CountdownTimer';
 import React from 'react';
 import Todos from '@/components/todos/Todos';
 import { cn } from '@/lib/utils';
 import { Card } from '@/components/ui/card';
-import { GripVertical } from 'lucide-react';
 
 const defaultCards = [
   {
@@ -19,7 +18,7 @@ export default function Dashboard() {
   return (
     <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
       {defaultCards.map((card) => (
-        <div className={cn(card.className, "h-96")}>
+        <div className={cn(card.className, 'h-96')}>
           <Card className={cn('h-full p-3')}>{card.element}</Card>
         </div>
       ))}
