@@ -9,7 +9,7 @@ export async function signOut() {
   try {
     const signOutUserUseCase = container.resolve(SignOutUserUseCase);
 
-    const res = await signOutUserUseCase.execute();
+    await signOutUserUseCase.execute();
     return { success: true, message: 'User signOut successfully' };
   } catch (error: any) {
     return { success: false, message: error.message };
