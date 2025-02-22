@@ -5,7 +5,7 @@ import { Menubar, MenubarMenu } from '@/components/ui/menubar';
 
 const Navbar = () => {
   return (
-    <div className="mb-3 flex h-16 items-center justify-between gap-4 border-b border-gray-600 px-6">
+    <div className="fixed mb-3 flex w-dvw h-16 items-center justify-between gap-4 border-b border-gray-600 px-6">
       <Link href="/">
         <div className="cursor-pointer text-lg font-semibold">My Website</div>
       </Link>

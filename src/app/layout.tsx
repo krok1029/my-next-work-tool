@@ -67,7 +67,7 @@ export default function RootLayout({
       >
         <ThemeProvider>
           <Navbar />
-          <div className="px-4 md:px-24">{children}</div>
+          <div className="pt-16 min-h-dvh px-4 md:px-24">{children}</div>
           <Toaster />
         </ThemeProvider>
       </body>
