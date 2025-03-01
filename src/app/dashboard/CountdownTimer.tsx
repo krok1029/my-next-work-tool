@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { CardFooter } from '../../components/ui/card';
@@ -22,23 +22,27 @@ const useTimer = (
   onComplete: () => Promise<void>
 ) => {
   const [timeLeft, setTimeLeft] = useState(initialTime);
+  const stableOnComplete = useCallback(onComplete, []);
 
   useEffect(() => {
-    if (!isActive) return;
+    if (!isActive || timeLeft <= 0) return;
 
-    const interval = setInterval(() => {
+    const timeout = setTimeout(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
-          clearInterval(interval);
-          onComplete();
+          stableOnComplete().catch(console.error);
           return 0;
         }
         return prev - 1;
       });
     }, 1000);
 
-    return () => clearInterval(interval);
-  }, [isActive, onComplete]);
+    return () => clearTimeout(timeout);
+  }, [isActive, timeLeft, stableOnComplete]);
+
+  useEffect(() => {
+    setTimeLeft(initialTime);
+  }, [initialTime]);
 
   return { timeLeft, setTimeLeft };
 };
@@ -53,7 +57,7 @@ const handleConsumePomodoro = async (id: number) => {
     });
 
     if (response.ok) {
-      mutate('/api/todos');
+      mutate('/api/todos', undefined, { revalidate: true });
     } else {
       console.error('Failed to consume pomodoro');
     }
@@ -64,14 +68,8 @@ const handleConsumePomodoro = async (id: number) => {
 
 export default function CountdownTimer() {
   const { data: user, isLoading } = useFetch<User>('/api/user');
-  const workDuration = useMemo(
-    () => (user ? user.workDuration * 60 : 0),
-    [user]
-  );
-  const breakDuration = useMemo(
-    () => (user ? user.breakDuration * 60 : 0),
-    [user]
-  );
+  const workDuration = (user?.workDuration ?? 0) * 60;
+  const breakDuration = (user?.breakDuration ?? 0) * 60;
 
   const [status, setStatus] = useState<State>(State.Work);
   const {
@@ -98,10 +96,8 @@ export default function CountdownTimer() {
         return;
       }
       setStatus(State.Break);
-      setTimeLeft(breakDuration);
     } else {
       setStatus(State.Work);
-      setTimeLeft(workDuration);
     }
     startProgress();
   };
@@ -120,8 +116,8 @@ export default function CountdownTimer() {
   }, [selectedTodo?.id]);
 
   const resetTimer = () => {
-    setTimeLeft(workDuration);
     setStatus(State.Work);
+    setTimeLeft(workDuration);
     stopProgress();
   };
 
