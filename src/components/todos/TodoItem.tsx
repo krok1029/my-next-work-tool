@@ -23,6 +23,7 @@ import {
 import clsx from 'clsx';
 import { cn } from '@/lib/utils';
 import { useTodoStore } from '@/lib/zustandStore';
+import { deleteTodo } from '@/lib/api/todos';
 
 const TodoItem = ({
   todo,
@@ -34,25 +35,10 @@ const TodoItem = ({
   const { id, title, completed, totalPomodoros, completedPomodoros } = todo;
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const { selectedTodo, setSelectedTodo, clearSelectedTodo, isInProgress } = useTodoStore();
-  const deleteTodo = async () => {
-    try {
-      const response = await fetch(`/api/todos/${id}`, {
-        method: 'DELETE',
-      });
-      if (response.ok) {
-        mutate('/api/todos');
-        clearSelectedTodo()
-      } else {
-        console.error('Failed to delete todo');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
-
   const handleDelete = async () => {
-    await deleteTodo();
+    await deleteTodo(id);
     mutate('/api/todos');
+    clearSelectedTodo();
     setOpenDeleteDialog(false);
   };
 

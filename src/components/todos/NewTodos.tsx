@@ -3,50 +3,30 @@
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { mutate } from 'swr';
+import { createTodo } from '@/lib/api/todos';
 
 const NewTodos = () => {
   const [editedTitle, setEditedTitle] = useState('');
   const [isSaving, setIsSaving] = useState(false); // 用於防止重複提交和顯示加載狀態
 
-  const saveTodo = async (
-    updatedFields: Partial<{
-      title: string;
-      completed: boolean;
-    }>
-  ) => {
+  const handleSave = async () => {
+    if (!editedTitle.trim()) {
+      console.error('Title cannot be empty');
+      return;
+    }
+
     setIsSaving(true); // 開始保存，設置加載狀態
     try {
-      const response = await fetch(`/api/todos`, {
-        method: 'POST', // POST 用於創建新資源
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedFields),
+      await createTodo({
+        title: editedTitle,
+        completed: false,
       });
-
-      if (response.ok) {
-        const newTodo = await response.json();
-        setEditedTitle(''); // 重置輸入框
-        mutate('/api/todos');
-      } else {
-        console.error('Failed to create todo');
-      }
+      setEditedTitle(''); // 重置輸入框
     } catch (error) {
       console.error('Error:', error);
     } finally {
       setIsSaving(false); // 完成保存，取消加載狀態
     }
-  };
-
-  const handleSave = () => {
-    if (!editedTitle.trim()) {
-      console.error('Title cannot be empty');
-      return;
-    }
-    saveTodo({
-      title: editedTitle,
-    });
   };
 
   return (
