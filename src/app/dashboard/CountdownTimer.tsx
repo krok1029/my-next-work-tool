@@ -22,7 +22,8 @@ const useTimer = (
   onComplete: () => Promise<void>
 ) => {
   const [timeLeft, setTimeLeft] = useState(initialTime);
-  const stableOnComplete = useCallback(onComplete, []);
+  const stableOnComplete = useCallback(onComplete, [onComplete]);
+
 
   useEffect(() => {
     if (!isActive || timeLeft <= 0) return;
@@ -68,8 +69,8 @@ const handleConsumePomodoro = async (id: number) => {
 
 export default function CountdownTimer() {
   const { data: user, isLoading } = useFetch<User>('/api/user');
-  const workDuration = (user?.workDuration ?? 0) * 60;
-  const breakDuration = (user?.breakDuration ?? 0) * 60;
+  const workDuration = (user?.workDuration ?? 0) * 10;
+  const breakDuration = (user?.breakDuration ?? 0) * 10;
 
   const [status, setStatus] = useState<State>(State.Work);
   const {
@@ -80,7 +81,14 @@ export default function CountdownTimer() {
     isInProgress,
   } = useTodoStore();
 
-  const handleNextPhase = async () => {
+  const resetTimer = () => {
+    setStatus(State.Work);
+    setTimeLeft(workDuration);
+    stopProgress();
+  };
+
+  const handleNextPhase = useCallback(async () => {
+    console.log('times up');
     if (!selectedTodo) {
       return;
     }
@@ -100,7 +108,7 @@ export default function CountdownTimer() {
       setStatus(State.Work);
     }
     startProgress();
-  };
+  }, [selectedTodo, status, setSelectedTodo, resetTimer, startProgress]);
 
   const { timeLeft, setTimeLeft } = useTimer(
     status === State.Work ? workDuration : breakDuration,
@@ -114,12 +122,6 @@ export default function CountdownTimer() {
       setTimeLeft(workDuration);
     }
   }, [selectedTodo?.id]);
-
-  const resetTimer = () => {
-    setStatus(State.Work);
-    setTimeLeft(workDuration);
-    stopProgress();
-  };
 
   if (isLoading || !user) {
     return <div>Loading...</div>;
