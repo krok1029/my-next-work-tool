@@ -1,79 +1,26 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { CardFooter } from '../../components/ui/card';
+import { CardFooter } from '@/components/ui/card';
 import useFetch from '@/hooks/use-fetch';
-import { User } from '@/domain/user/User';
+import useTimer from '@/hooks/use-timer';
 import { useTodoStore } from '@/lib/zustandStore';
+import { consumePomodoro } from '@/lib/api/todos';
 import { Pause, Play, RotateCcw } from 'lucide-react';
-import { mutate } from 'swr';
 import CircleProgressBar from '@/app/dashboard/CircleProgressBar';
+import { User } from '@/domain/user/User';
 
 export enum State {
   Work = 'Work',
   Break = 'Break',
 }
 
-const useTimer = (
-  initialTime: number,
-  isActive: boolean,
-  onComplete: () => Promise<void>
-) => {
-  const [timeLeft, setTimeLeft] = useState(initialTime);
-  const onCompleteRef = useRef(onComplete);
-
-  // 保持 onComplete 為最新版本
-  useEffect(() => {
-    onCompleteRef.current = onComplete;
-  }, [onComplete]);
-
-  useEffect(() => {
-    if (!isActive || timeLeft <= 0) return;
-
-    const timeout = setTimeout(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          onCompleteRef.current().catch(console.error);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearTimeout(timeout);
-  }, [isActive, timeLeft]);
-
-  useEffect(() => {
-    setTimeLeft(initialTime);
-  }, [initialTime]);
-
-  return { timeLeft, setTimeLeft };
-};
-
-const handleConsumePomodoro = async (id: number) => {
-  try {
-    const response = await fetch(`/api/todos/${id}/consume_pomodoro`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (response.ok) {
-      mutate('/api/todos', undefined, { revalidate: true });
-    } else {
-      console.error('Failed to consume pomodoro');
-    }
-  } catch (error) {
-    console.error('Error Failed to consume pomodoro:', error);
-  }
-};
-
 export default function CountdownTimer() {
   const { data: user, isLoading } = useFetch<User>('/api/user');
-  const workDuration = (user?.workDuration ?? 25) * 10;
-  const breakDuration = (user?.breakDuration ?? 5) * 10;
+
+  const workDuration = (user?.workDuration ?? 25) * 60;
+  const breakDuration = (user?.breakDuration ?? 5) * 60;
 
   const [status, setStatus] = useState<State>(State.Work);
 
@@ -85,34 +32,34 @@ export default function CountdownTimer() {
     isInProgress,
   } = useTodoStore();
 
+  const onTimerComplete = async () => {
+    if (!selectedTodo) return;
+
+    if (status === State.Work) {
+      await consumePomodoro(selectedTodo.id);
+      const updated = {
+        ...selectedTodo,
+        completedPomodoros: selectedTodo.completedPomodoros + 1,
+      };
+      setSelectedTodo(updated);
+
+      if (updated.completedPomodoros >= updated.totalPomodoros) {
+        resetTimer();
+        return;
+      }
+
+      setStatus(State.Break);
+    } else {
+      setStatus(State.Work);
+    }
+
+    startProgress();
+  };
+
   const { timeLeft, setTimeLeft } = useTimer(
     status === State.Work ? workDuration : breakDuration,
     isInProgress,
-    async () => {
-      if (!selectedTodo) return;
-
-      if (status === State.Work) {
-        await handleConsumePomodoro(selectedTodo.id);
-        const updated = {
-          ...selectedTodo,
-          completedPomodoros: selectedTodo.completedPomodoros + 1,
-        };
-        setSelectedTodo(updated);
-
-        if (updated.completedPomodoros >= updated.totalPomodoros) {
-          resetTimer();
-          return;
-        }
-
-        setStatus(State.Break);
-        setTimeLeft(breakDuration);
-      } else {
-        setStatus(State.Work);
-        setTimeLeft(workDuration);
-      }
-
-      startProgress();
-    }
+    onTimerComplete
   );
 
   const resetTimer = useCallback(() => {
@@ -121,13 +68,16 @@ export default function CountdownTimer() {
     stopProgress();
   }, [setTimeLeft, stopProgress, workDuration]);
 
-  // 切換任務時重設狀態
   useEffect(() => {
     if (selectedTodo) {
       setStatus(State.Work);
       setTimeLeft(workDuration);
     }
   }, [selectedTodo?.id, setTimeLeft, workDuration]);
+
+  useEffect(() => {
+    setTimeLeft(status === State.Work ? workDuration : breakDuration);
+  }, [status]);
 
   if (isLoading || !user) {
     return <div>Loading...</div>;
@@ -151,11 +101,7 @@ export default function CountdownTimer() {
             </div>
             <div className="flex gap-2">
               {isInProgress ? (
-                <Button
-                  variant="outline"
-                  onClick={stopProgress}
-                  disabled={!selectedTodo}
-                >
+                <Button variant="outline" onClick={stopProgress}>
                   <Pause />
                 </Button>
               ) : (
@@ -167,11 +113,7 @@ export default function CountdownTimer() {
                   <Play />
                 </Button>
               )}
-              <Button
-                variant="outline"
-                onClick={resetTimer}
-                disabled={!selectedTodo}
-              >
+              <Button variant="outline" onClick={resetTimer}>
                 <RotateCcw />
               </Button>
             </div>
