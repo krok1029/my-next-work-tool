@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { CardFooter } from '../../components/ui/card';
 import useFetch from '@/hooks/use-fetch';
@@ -22,8 +21,12 @@ const useTimer = (
   onComplete: () => Promise<void>
 ) => {
   const [timeLeft, setTimeLeft] = useState(initialTime);
-  const stableOnComplete = useCallback(onComplete, [onComplete]);
+  const onCompleteRef = useRef(onComplete);
 
+  // 保持 onComplete 為最新版本
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
 
   useEffect(() => {
     if (!isActive || timeLeft <= 0) return;
@@ -31,7 +34,7 @@ const useTimer = (
     const timeout = setTimeout(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
-          stableOnComplete().catch(console.error);
+          onCompleteRef.current().catch(console.error);
           return 0;
         }
         return prev - 1;
@@ -39,7 +42,7 @@ const useTimer = (
     }, 1000);
 
     return () => clearTimeout(timeout);
-  }, [isActive, timeLeft, stableOnComplete]);
+  }, [isActive, timeLeft]);
 
   useEffect(() => {
     setTimeLeft(initialTime);
@@ -69,10 +72,11 @@ const handleConsumePomodoro = async (id: number) => {
 
 export default function CountdownTimer() {
   const { data: user, isLoading } = useFetch<User>('/api/user');
-  const workDuration = (user?.workDuration ?? 0) * 10;
-  const breakDuration = (user?.breakDuration ?? 0) * 10;
+  const workDuration = (user?.workDuration ?? 25) * 10;
+  const breakDuration = (user?.breakDuration ?? 5) * 10;
 
   const [status, setStatus] = useState<State>(State.Work);
+
   const {
     selectedTodo,
     setSelectedTodo,
@@ -81,47 +85,49 @@ export default function CountdownTimer() {
     isInProgress,
   } = useTodoStore();
 
-  const resetTimer = () => {
-    setStatus(State.Work);
-    setTimeLeft(workDuration);
-    stopProgress();
-  };
-
-  const handleNextPhase = useCallback(async () => {
-    console.log('times up');
-    if (!selectedTodo) {
-      return;
-    }
-    if (status === State.Work) {
-      await handleConsumePomodoro(selectedTodo.id);
-      setSelectedTodo({
-        ...selectedTodo,
-        completedPomodoros: selectedTodo.completedPomodoros + 1,
-      });
-
-      if (selectedTodo.completedPomodoros + 1 >= selectedTodo.totalPomodoros) {
-        resetTimer();
-        return;
-      }
-      setStatus(State.Break);
-    } else {
-      setStatus(State.Work);
-    }
-    startProgress();
-  }, [selectedTodo, status, setSelectedTodo, resetTimer, startProgress]);
-
   const { timeLeft, setTimeLeft } = useTimer(
     status === State.Work ? workDuration : breakDuration,
     isInProgress,
-    handleNextPhase
+    async () => {
+      if (!selectedTodo) return;
+
+      if (status === State.Work) {
+        await handleConsumePomodoro(selectedTodo.id);
+        const updated = {
+          ...selectedTodo,
+          completedPomodoros: selectedTodo.completedPomodoros + 1,
+        };
+        setSelectedTodo(updated);
+
+        if (updated.completedPomodoros >= updated.totalPomodoros) {
+          resetTimer();
+          return;
+        }
+
+        setStatus(State.Break);
+        setTimeLeft(breakDuration);
+      } else {
+        setStatus(State.Work);
+        setTimeLeft(workDuration);
+      }
+
+      startProgress();
+    }
   );
 
+  const resetTimer = useCallback(() => {
+    setStatus(State.Work);
+    setTimeLeft(workDuration);
+    stopProgress();
+  }, [setTimeLeft, stopProgress, workDuration]);
+
+  // 切換任務時重設狀態
   useEffect(() => {
     if (selectedTodo) {
       setStatus(State.Work);
       setTimeLeft(workDuration);
     }
-  }, [selectedTodo?.id]);
+  }, [selectedTodo?.id, setTimeLeft, workDuration]);
 
   if (isLoading || !user) {
     return <div>Loading...</div>;

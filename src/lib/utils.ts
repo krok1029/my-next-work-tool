@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { omitBy, isUndefined } from 'lodash';
+import omitBy from 'lodash-es/omitBy';
+import isUndefined from 'lodash-es/isUndefined';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

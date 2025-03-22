@@ -1,5 +1,5 @@
-import _ from 'lodash';
 import { Todo as PrismaTodo, Priority } from '@prisma/client';
+import { cleanObject } from '@/lib/utils';
 export interface TodoFilter {
   deadlineToday?: boolean;
   sortByPriority?: boolean;
@@ -57,7 +57,7 @@ export class Todo {
   }
 
   update(fields: Partial<Omit<Todo, 'id'>>) {
-    const filteredFields = _.omitBy(fields, _.isUndefined);
+    const filteredFields = cleanObject(fields);
     Object.assign(this, filteredFields);
   }
 }
