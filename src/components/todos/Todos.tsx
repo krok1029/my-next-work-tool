@@ -8,7 +8,7 @@ import TodoSheet from '@/components/todos/TodoSheet';
 import { useState } from 'react';
 
 const Todos = () => {
-  const { data: todos, error, isLoading } = useFetch<Todo[]>('/api/todos');
+  const { data: todos, error, isLoading } = useFetch<Todo[]>('todos');
   const [isOpen, setIsOpen] = useState(false);
   if (isLoading) return;
 

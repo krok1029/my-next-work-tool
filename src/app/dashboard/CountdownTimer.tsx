@@ -17,7 +17,7 @@ export enum State {
 }
 
 export default function CountdownTimer() {
-  const { data: user, isLoading } = useFetch<User>('/api/user');
+  const { data: user, isLoading } = useFetch<User>('user');
 
   const workDuration = (user?.workDuration ?? 25) * 60;
   const breakDuration = (user?.breakDuration ?? 5) * 60;

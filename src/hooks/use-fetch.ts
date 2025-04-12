@@ -1,7 +1,14 @@
+import { api } from '@/lib/api/client';
 import useSWR, { SWRConfiguration } from 'swr';
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
-
+const fetcher = async <T>(url: string): Promise<T> => {
+  try {
+    return await api(url).json<T>();
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    throw new Error('Failed to fetch data');
+  }
+};
 const useFetch = <T>(path: string, options?: SWRConfiguration) => {
   const defaultOptions: SWRConfiguration = {
     refreshInterval: 0,

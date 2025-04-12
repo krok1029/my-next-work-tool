@@ -43,6 +43,7 @@ import {
 import { mutate } from 'swr';
 import { toast } from '@/hooks/use-toast';
 import { useTodoStore } from '@/lib/zustandStore';
+import { api } from '@/lib/api/client';
 
 const TodoSheet: React.FC<{
   isOpen: boolean;
@@ -67,13 +68,7 @@ const TodoSheet: React.FC<{
     data: z.infer<typeof putTodoValidator>
   ) => {
     try {
-      const response = await fetch(`/api/todos/${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
+      const response = await api.patch(`todos/${id}`, { json: data });
 
       if (response.ok) {
         setIsOpen(false);
