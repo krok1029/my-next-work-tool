@@ -12,18 +12,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
 import clsx from 'clsx';
 import { cn } from '@/lib/utils';
 import { useTodoStore } from '@/lib/zustandStore';
 import { deleteTodo } from '@/lib/api/todos';
+import DeleteDialog from '@/components/todos/DeleteDialog';
 
 const TodoItem = ({
   todo,
@@ -117,32 +110,3 @@ const TodoItem = ({
 
 export default TodoItem;
 
-const DeleteDialog = ({
-  name,
-  open,
-  setOpen,
-  onDelete,
-}: {
-  name: string;
-  open: boolean;
-  setOpen: (open: boolean) => void;
-  onDelete: () => void;
-}) => {
-  return (
-    <Dialog open={open} onOpenChange={(open) => setOpen(open)}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Delete Todo</DialogTitle>
-        </DialogHeader>
-        <DialogDescription>
-          Are you sure to delete <strong>{name}</strong> ?
-        </DialogDescription>
-        <DialogFooter>
-          <Button type="button" onClick={onDelete}>
-            Delete
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-};
