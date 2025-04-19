@@ -37,7 +37,7 @@ const TodoItem = ({
   const { selectedTodo, setSelectedTodo, clearSelectedTodo, isInProgress } = useTodoStore();
   const handleDelete = async () => {
     await deleteTodo(id);
-    mutate('/api/todos');
+    mutate('todos');
     clearSelectedTodo();
     setOpenDeleteDialog(false);
   };

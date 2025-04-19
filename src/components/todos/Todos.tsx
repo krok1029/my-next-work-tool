@@ -10,6 +10,7 @@ import { useState } from 'react';
 const Todos = () => {
   const { data: todos, error, isLoading } = useFetch<Todo[]>('todos');
   const [isOpen, setIsOpen] = useState(false);
+
   if (isLoading) return;
 
   if (error) return <p className="text-red-500">Error fetching todos</p>;

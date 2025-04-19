@@ -1,4 +1,4 @@
-// lib/api/todos.ts
+// libtodos.ts
 import { mutate } from 'swr';
 import { api } from './client';
 import { Todo } from '@/domain/todo/Todo';
@@ -17,7 +17,7 @@ export const getTodos = async (): Promise<Todo[] | undefined> => {
 export const createTodo = async (data: { title: string; completed: boolean }): Promise<Todo | undefined> => {
   try {
     const todo = await api.post('todos', { json: data }).json<Todo>();
-    mutate('/api/todos');
+    mutate('todos');
     return todo;
   } catch (error) {
     console.error('Error creating todo:', error);
@@ -32,7 +32,7 @@ export const updateTodo = async (
 ): Promise<Todo | undefined> => {
   try {
     const updated = await api.patch(`todos/${id}`, { json: data }).json<Todo>();
-    mutate('/api/todos');
+    mutate('todos');
     return updated;
   } catch (error) {
     console.error('Error updating todo:', error);
@@ -44,7 +44,7 @@ export const updateTodo = async (
 export const deleteTodo = async (id: number): Promise<boolean> => {
   try {
     await api.delete(`todos/${id}`);
-    mutate('/api/todos');
+    mutate('todos');
     return true;
   } catch (error) {
     console.error('Error deleting todo:', error);
@@ -56,7 +56,7 @@ export const deleteTodo = async (id: number): Promise<boolean> => {
 export const consumePomodoro = async (id: number): Promise<boolean> => {
   try {
     await api.post(`todos/${id}/consume_pomodoro`);
-    mutate('/api/todos');
+    mutate('todos');
     return true;
   } catch (error) {
     console.error('Error consuming pomodoro:', error);
