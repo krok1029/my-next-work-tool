@@ -28,7 +28,7 @@ export const createTodo = async (data: { title: string; completed: boolean }): P
 // ✅ 3. 更新 Todo
 export const updateTodo = async (
   id: number,
-  data: Partial<Pick<Todo, 'title' | 'completed'>>
+  data: Partial<Pick<Todo, 'title' | 'completed' | 'totalPomodoros' | 'completedPomodoros'>>
 ): Promise<Todo | undefined> => {
   try {
     const updated = await api.patch(`todos/${id}`, { json: data }).json<Todo>();

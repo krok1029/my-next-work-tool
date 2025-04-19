@@ -27,14 +27,7 @@ const TodoItem = ({
 }) => {
   const { id, title, completed, totalPomodoros, completedPomodoros } = todo;
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const { selectedTodo, setSelectedTodo, clearSelectedTodo, isInProgress } =
-    useTodoStore();
-  const handleDelete = async () => {
-    await deleteTodo(id);
-    mutate('todos');
-    clearSelectedTodo();
-    setOpenDeleteDialog(false);
-  };
+  const { selectedTodo, setSelectedTodo, isInProgress } = useTodoStore();
 
   return (
     <div className="flex items-center gap-4">
@@ -68,7 +61,14 @@ const TodoItem = ({
 
             <span className="text-nowrap">{`${completedPomodoros} / ${totalPomodoros}`}</span>
             <DropdownMenu modal={false}>
-              <DropdownMenuTrigger>
+              <DropdownMenuTrigger
+                className={cn(
+                  isInProgress &&
+                    selectedTodo?.id === todo.id &&
+                    'cursor-not-allowed'
+                )}
+                disabled={isInProgress && selectedTodo?.id === todo.id}
+              >
                 <EllipsisVertical />
               </DropdownMenuTrigger>
               <DropdownMenuContent>

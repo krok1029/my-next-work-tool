@@ -9,31 +9,83 @@ import clsx from 'clsx';
 
 import { Badge } from '@/components/ui/badge';
 import DeleteDialog from '@/components/todos/DeleteDialog';
+import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
+import { updateTodo } from '@/lib/api/todos';
 
 const TodoItem = ({ todo }: { todo: Todo }) => {
   const { id, title, completed, totalPomodoros } = todo;
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-
+  const [editingTitle, setEditingTitle] = useState(false);
+  const [editTotalPmomdoros, setEditTotalPmomdoros] = useState(false);
 
   return (
     <div className="flex items-center gap-4">
       <Card className="my-3 flex-1">
-        <CardContent className="flex items-center justify-between py-4">
-          <div className="flex w-full items-center space-x-2">
+        <CardContent className="items-center justify-between py-4">
+          <Badge>Tag</Badge>
+          <div className="relative flex w-full items-center space-x-2">
             <Link
-              className="text-xs text-secondary-foreground hover:underline"
+              className={cn(
+                'text-nowrap text-xs text-secondary-foreground hover:underline',
+                editingTitle && 'hidden'
+              )}
               href={`/todos/${todo.id}`}
             >{`TODO-${todo.id}`}</Link>
-            <span
-              className={clsx(
-                'w-0 shrink grow truncate',
-                completed && 'line-through'
-              )}
-              onClick={() => {}}
-            >
-              {title}
-            </span>
-            <Badge variant="default">{totalPomodoros}</Badge>
+            {editingTitle ? (
+              <>
+                <Input
+                  id="title"
+                  autoFocus
+                  type="text"
+                  defaultValue={title}
+                  className="w-full border-b-2 border-gray-300 focus:outline-none"
+                  onBlur={() => setEditingTitle(false)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      setEditingTitle(false);
+                      updateTodo(id, { title: e.currentTarget.value });
+                    }
+                  }}
+                />
+              </>
+            ) : (
+              <span
+                className={clsx(
+                  'w-0 shrink grow truncate',
+                  completed && 'line-through'
+                )}
+                onClick={() => setEditingTitle(true)}
+              >
+                {title}
+              </span>
+            )}
+
+            {editTotalPmomdoros ? (
+              <Input
+                id="totalPomodoros"
+                type="number"
+                autoFocus
+                defaultValue={totalPomodoros}
+                className="w-16 border-b-2 border-gray-300 focus:outline-none"
+                onBlur={() => setEditTotalPmomdoros(false)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    setEditTotalPmomdoros(false);
+                    updateTodo(id, {
+                      totalPomodoros: Number(e.currentTarget.value),
+                    });
+                  }
+                }}
+              />
+            ) : (
+              <Badge
+                variant="outline"
+                onClick={() => setEditTotalPmomdoros(true)}
+              >
+                {totalPomodoros}
+              </Badge>
+            )}
             <Trash2
               className="h-4 w-4 cursor-pointer text-red-500"
               onClick={(e) => {
