@@ -27,7 +27,8 @@ const TodoItem = ({
 }) => {
   const { id, title, completed, totalPomodoros, completedPomodoros } = todo;
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const { selectedTodo, setSelectedTodo, clearSelectedTodo, isInProgress } = useTodoStore();
+  const { selectedTodo, setSelectedTodo, clearSelectedTodo, isInProgress } =
+    useTodoStore();
   const handleDelete = async () => {
     await deleteTodo(id);
     mutate('todos');
@@ -99,14 +100,12 @@ const TodoItem = ({
         </CardContent>
       </Card>
       <DeleteDialog
-        name={title}
+        todo={todo}
         open={openDeleteDialog}
         setOpen={(open) => setOpenDeleteDialog(open)}
-        onDelete={handleDelete}
       />
     </div>
   );
 };
 
 export default TodoItem;
-
