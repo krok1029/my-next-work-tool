@@ -7,12 +7,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import useFetch from '@/hooks/use-fetch';
-import { Priority, Todo } from '@prisma/client';
+import { Todo } from '@prisma/client';
 import { Search } from 'lucide-react';
+import NewTodos from '@/components/todos/NewTodos';
 
 export default function Todos() {
   const { data: todos } = useFetch<Todo[]>('todos');
-    const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>
@@ -29,9 +30,8 @@ export default function Todos() {
         <Card>
           <CardHeader>Todos List</CardHeader>
           <CardContent>
-            {todos?.map((todo) => (
-              <TodoItem key={todo.id} todo={todo} />
-            ))}
+            <NewTodos />
+            {todos?.map((todo) => <TodoItem key={todo.id} todo={todo} />)}
           </CardContent>
         </Card>
         <TodoSheet isOpen={isOpen} setIsOpen={setIsOpen} />

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { createTodo } from '@/lib/api/todos';
+import { Plus } from 'lucide-react';
 
 const NewTodos = () => {
   const [editedTitle, setEditedTitle] = useState('');
@@ -49,7 +50,7 @@ const NewTodos = () => {
         onClick={handleSave}
         disabled={isSaving} // 當正在保存時禁用按鈕
       >
-        {isSaving ? 'Creating...' : 'Create'}
+        {isSaving ? 'Creating...' : <Plus className="h-4 w-4" />}
       </Button>
     </div>
   );

@@ -22,12 +22,12 @@ const TodoItem = ({ todo }: { todo: Todo }) => {
   return (
     <div className="flex items-center gap-4">
       <Card className="my-3 flex-1">
-        <CardContent className="items-center justify-between py-4">
+        <CardContent className="items-center justify-between space-y-2 py-4">
           <Badge>Tag</Badge>
-          <div className="relative flex w-full items-center space-x-2">
+          <div className="flex w-full items-center space-x-2">
             <Link
               className={cn(
-                'text-nowrap text-xs text-secondary-foreground hover:underline',
+                'text-nowrap text-xs text-gray-400 hover:underline',
                 editingTitle && 'hidden'
               )}
               href={`/todos/${todo.id}`}
@@ -52,7 +52,7 @@ const TodoItem = ({ todo }: { todo: Todo }) => {
             ) : (
               <span
                 className={clsx(
-                  'w-0 shrink grow truncate',
+                  'w-0 shrink grow truncate text-lg',
                   completed && 'line-through'
                 )}
                 onClick={() => setEditingTitle(true)}
