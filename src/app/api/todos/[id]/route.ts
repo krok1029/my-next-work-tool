@@ -1,3 +1,4 @@
+import "server-only"
 import 'reflect-metadata';
 import '@/infrastructure/di/Container';
 import { NextRequest, NextResponse } from 'next/server';
@@ -7,6 +8,25 @@ import { GetTodoUseCase } from '@/application/todo/GetTodoUseCase';
 import { DeleteTodoUseCase } from '@/application/todo/DeleteTodoUseCase';
 import { putTodoValidator, validatePayload } from '@/lib/validators';
 import { ZodError } from 'zod';
+
+export async function GET(
+  _req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const { id } = params;
+
+  try {
+    const getTodoUseCase = container.resolve(GetTodoUseCase);
+    const todo = await getTodoUseCase.execute(Number(id));
+
+    return NextResponse.json(todo, { status: 200 });
+  } catch (error) {
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : error },
+      { status: 500 }
+    );
+  }
+}
 
 export async function PATCH(
   req: NextRequest,
