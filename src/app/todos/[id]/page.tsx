@@ -30,7 +30,6 @@ export default TodoDetail;
 import MultipleSelector, { Option } from '@/components/ui/multiple-selector';
 import { useState } from 'react';
 
-
 const OPTIONS: Option[] = [
   { label: 'nextjs', value: 'Nextjs' },
   { label: 'React', value: 'react' },
@@ -66,11 +65,16 @@ const MultipleSelectorWithAsyncSearchAndCreatable = () => {
           setIsTriggered(false);
           return res;
         }}
+        onChange={(value) => {
+          console.log(value);
+        }}
         defaultOptions={[]}
-        creatable
+        creatable={true}
         placeholder="trying to search 'a' to get more options..."
         loadingIndicator={
-          <p className="py-2 text-center text-lg leading-10 text-muted-foreground">loading...</p>
+          <p className="py-2 text-center text-lg leading-10 text-muted-foreground">
+            loading...
+          </p>
         }
         emptyIndicator={
           <p className="w-full text-center text-lg leading-10 text-muted-foreground">
@@ -81,4 +85,3 @@ const MultipleSelectorWithAsyncSearchAndCreatable = () => {
     </div>
   );
 };
-
