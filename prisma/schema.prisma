@@ -37,15 +37,24 @@ model Todo {
   parentTodoId       Int?
   parentTodo         Todo?    @relation("TodoChildren", fields: [parentTodoId], references: [id])
   subTodos           Todo[]   @relation("TodoChildren")
-  tags               Tag[]    @relation("TodoTags")
   deadline           DateTime @default(now())
 }
 
-model Tag {
-  id    Int    @id @default(autoincrement())
-  name  String @unique
-  todos Todo[] @relation("TodoTags") // 標籤與任務的關聯
+enum TagTargetType {
+  TODO
+  USER
 }
+
+model Tag {
+  id          Int            @id @default(autoincrement())
+  name        String
+  targetType  TagTargetType
+  targetId    String
+  createdAt   DateTime        @default(now())
+
+  @@index([targetType, targetId])
+}
+
 
 model Statistics {
   id                  Int    @id @default(autoincrement())
