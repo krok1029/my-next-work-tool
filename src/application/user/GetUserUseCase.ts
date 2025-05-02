@@ -2,7 +2,7 @@
 import { injectable, inject } from 'tsyringe';
 import type { UserRepository } from '@/domain/user/UserRepository';
 import { User } from '@/domain/user/User';
-import { AUTH } from '@/infrastructure/di/DependencyInjectionTokens';
+import { AUTH } from '@/domain/shared/DependencyInjectionTokens';
 import type { AuthService } from '@/domain/auth/AuthService';
 
 @injectable()

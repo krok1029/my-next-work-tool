@@ -1,6 +1,6 @@
 // application/todo/ConsumePomodoroUseCase.ts
 import type { TodoRepository } from '@/domain/todo/TodoRepository';
-import { TODO } from '@/infrastructure/di/DependencyInjectionTokens';
+import { TODO } from '@/domain/shared/DependencyInjectionTokens';
 import { injectable, inject } from 'tsyringe';
 import '@/infrastructure/di/Container';
 
@@ -15,6 +15,6 @@ export class ConsumePomodoroUseCase {
     }
 
     todo.consumePomodoro();
-    await this.todoRepository.save(todo);
+    await this.todoRepository.update(todo);
   }
 }

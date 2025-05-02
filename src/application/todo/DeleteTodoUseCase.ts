@@ -1,7 +1,7 @@
 import '@/infrastructure/di/Container';
 import { inject, injectable } from 'tsyringe';
 import type { TodoRepository } from '@/domain/todo/TodoRepository';
-import { TODO } from '@/infrastructure/di/DependencyInjectionTokens';
+import { TODO } from '@/domain/shared/DependencyInjectionTokens';
 
 @injectable()
 export class DeleteTodoUseCase {

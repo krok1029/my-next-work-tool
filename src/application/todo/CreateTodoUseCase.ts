@@ -1,7 +1,7 @@
 import '@/infrastructure/di/Container';
 import { injectable, inject } from 'tsyringe';
 
-import { TODO, AUTH } from '@/infrastructure/di/DependencyInjectionTokens';
+import { TODO, AUTH } from '@/domain/shared/DependencyInjectionTokens';
 import type { TodoRepository } from '@/domain/todo/TodoRepository';
 import type { AuthService } from '@/domain/auth/AuthService';
 import { Todo } from '@/domain/todo/Todo'; // ✅ 加上 Todo import

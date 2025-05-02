@@ -1,6 +1,6 @@
 // application/todo/UpdateTodoUseCase.ts
 import type { TodoRepository } from '@/domain/todo/TodoRepository';
-import { TODO } from '@/infrastructure/di/DependencyInjectionTokens';
+import { TODO } from '@/domain/shared/DependencyInjectionTokens';
 import { injectable, inject } from 'tsyringe';
 import '@/infrastructure/di/Container';
 import { Todo } from '@/domain/todo/Todo';
@@ -16,6 +16,6 @@ export class UpdateTodoUseCase {
     }
 
     todo.update(updatedFields);
-    await this.todoRepository.save(todo);
+    await this.todoRepository.update(todo);
   }
 }

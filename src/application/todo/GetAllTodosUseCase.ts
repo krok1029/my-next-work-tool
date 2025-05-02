@@ -1,8 +1,8 @@
 // application/todo/GetAllTodosUseCase.ts
-import '@/infrastructure/di/Container';
+
 import type { TodoRepository } from '@/domain/todo/TodoRepository';
 import { injectable, inject } from 'tsyringe';
-import { AUTH, TODO } from '@/infrastructure/di/DependencyInjectionTokens';
+import { AUTH, TODO } from '@/domain/shared/DependencyInjectionTokens';
 import type { AuthService } from '@/domain/auth/AuthService';
 
 @injectable()

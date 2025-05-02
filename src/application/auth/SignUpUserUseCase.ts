@@ -1,7 +1,7 @@
 import '@/infrastructure/di/Container';
 import { injectable, inject } from 'tsyringe';
 import type { AuthService } from '@/domain/auth/AuthService';
-import { AUTH } from '@/infrastructure/di/DependencyInjectionTokens';
+import { AUTH } from '@/domain/shared/DependencyInjectionTokens';
 
 @injectable()
 export class SignUpUserUseCase {
