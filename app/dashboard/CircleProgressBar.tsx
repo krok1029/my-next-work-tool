@@ -9,7 +9,7 @@ import {
   RadialBarChart,
 } from 'recharts';
 import { ChartContainer } from '@/components/ui/chart';
-import { State } from '@/app/dashboard/CountdownTimer';
+import { State } from './CountdownTimer';
 
 const secondTimeFormatter = (seconds: number) => {
   const minutes = Math.floor(seconds / 60);

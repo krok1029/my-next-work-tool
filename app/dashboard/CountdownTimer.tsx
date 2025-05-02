@@ -8,7 +8,7 @@ import useTimer from '@/hooks/use-timer';
 import { useTodoStore } from '@/lib/zustandStore';
 import { consumePomodoro } from '@/lib/api/todos';
 import { Pause, Play, RotateCcw } from 'lucide-react';
-import CircleProgressBar from '@/app/dashboard/CircleProgressBar';
+import CircleProgressBar from './CircleProgressBar';
 import { User } from '@/domain/user/User';
 
 export enum State {
