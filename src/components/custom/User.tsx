@@ -7,7 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { signOut } from '../../../app/action/auth/signOut';
+import { signOut } from '@actions/auth/signOut';
 import { User as UserIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 

@@ -3,7 +3,7 @@
 import NewTodos from './NewTodos';
 import TodoItem from './TodoItem';
 import { Todo } from '@prisma/client';
-import useFetch from '@/hooks/use-fetch';
+import useFetch from '@hooks/use-fetch';
 import TodoSheet from '@/components/todos/TodoSheet';
 import { useState } from 'react';
 

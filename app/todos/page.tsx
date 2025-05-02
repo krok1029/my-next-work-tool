@@ -6,7 +6,7 @@ import TodoSheet from '@/components/todos/TodoSheet';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import useFetch from '@/hooks/use-fetch';
+import useFetch from '@hooks/use-fetch';
 import { Todo } from '@prisma/client';
 import { Search } from 'lucide-react';
 import NewTodos from '@/components/todos/NewTodos';

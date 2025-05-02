@@ -7,8 +7,8 @@ import { redirect } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { demoSignIn, signIn } from '../../action/auth/signIn';
-import { useToast } from '@/hooks/use-toast';
+import { demoSignIn, signIn } from '@actions/auth/signIn';
+import { useToast } from '@hooks/use-toast';
 
 function LoginForm() {
   const [isPending, startTransition] = useTransition();

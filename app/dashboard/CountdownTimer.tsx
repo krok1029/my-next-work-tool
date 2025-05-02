@@ -3,8 +3,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { CardFooter } from '@/components/ui/card';
-import useFetch from '@/hooks/use-fetch';
-import useTimer from '@/hooks/use-timer';
+import useFetch from '@hooks/use-fetch';
+import useTimer from '@hooks/use-timer';
 import { useTodoStore } from '@/lib/zustandStore';
 import { consumePomodoro } from '@/lib/api/todos';
 import { Pause, Play, RotateCcw } from 'lucide-react';

@@ -34,7 +34,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { mutate } from 'swr';
-import { toast } from '@/hooks/use-toast';
+import { toast } from '@hooks/use-toast';
 import { useTodoStore } from '@/lib/zustandStore';
 import { api } from '@/lib/api/client';
 

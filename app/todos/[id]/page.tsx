@@ -2,7 +2,7 @@
 
 import EditTodoForm from '@/components/todos/EditTodoForm';
 import { Label } from '@/components/ui/label';
-import useFetch from '@/hooks/use-fetch';
+import useFetch from '@hooks/use-fetch';
 import { Todo } from '@prisma/client';
 import { useParams } from 'next/navigation';
 

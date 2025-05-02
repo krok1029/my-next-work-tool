@@ -12,8 +12,8 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { signUp } from '../../action/auth/signUp';
-import { useToast } from '@/hooks/use-toast';
+import { signUp } from '@actions/auth/signUp';
+import { useToast } from '@hooks/use-toast';
 
 function RegisterForm() {
   const [error, setError] = useState<string | null>(null);
