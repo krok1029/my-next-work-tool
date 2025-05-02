@@ -1,4 +1,6 @@
-import "server-only";
+// src/app/api/todos/route.ts
+
+import 'server-only';
 import 'reflect-metadata';
 import '@/infrastructure/di/Container';
 import { NextRequest, NextResponse } from 'next/server';
@@ -11,7 +13,7 @@ export async function GET() {
   try {
     const getAllTodosUseCase = container.resolve(GetAllTodosUseCase);
     const todos = await getAllTodosUseCase.execute();
-    
+
     return NextResponse.json(todos);
   } catch (error) {
     return NextResponse.json(
@@ -29,14 +31,17 @@ export async function POST(req: NextRequest) {
     const { title } = parsedBody;
 
     const createTodoUseCase = container.resolve(CreateTodoUseCase);
-    const newTodo = await createTodoUseCase.execute(title);
+    const newTodo = await createTodoUseCase.execute({ title });
 
     // 返回新創建的 Todo 數據
     return NextResponse.json(newTodo, { status: 201 }); // 返回 201 創建成功狀態
   } catch (error) {
-    return NextResponse.json(
-      { message: 'Failed to create todo' },
-      { status: 500 }
-    );
+    if (error instanceof Error) {
+      // 返回錯誤信息
+      return NextResponse.json({ message: error.message }, { status: 400 });
+    } else {
+      // 返回通用錯誤信息
+      return NextResponse.json({ error }, { status: 500 });
+    }
   }
 }

@@ -10,47 +10,43 @@ import { Prisma } from '@prisma/client';
 export class PrismaTodoRepository implements TodoRepository {
   async findById(id: number): Promise<Todo | null> {
     const todoData = await prisma.todo.findUnique({ where: { id } });
-    if (!todoData) {
-      return null;
-    }
-    return new Todo(todoData);
+    return todoData ? Todo.fromPrisma(todoData) : null;
   }
 
-  async findAllByUser(
-    userId: string,
-    filter: TodoFilter = {}
-  ): Promise<Todo[]> {
-    const query = {
-      where: {
-        userId,
-        ...(filter.deadlineToday && {
-          deadline: {
-            gte: dayjs().startOf('day').toDate(),
-            lte: dayjs().endOf('day').toDate(),
-          },
-        }),
-        ...(filter.completed !== undefined && { completed: filter.completed }),
-        ...(filter.priority && { priority: filter.priority }),
-        ...(filter.deadlineBefore && {
-          deadline: { lte: filter.deadlineBefore },
-        }),
-        ...(filter.deadlineAfter && {
-          deadline: { gte: filter.deadlineAfter },
-        }),
-        ...(filter.search && { title: { contains: filter.search } }),
-      },
-      orderBy: [
-        filter.sortByPriority && {
-          priority: Prisma.SortOrder.desc,
+  async findAllByUser(userId: string, filter: TodoFilter = {}): Promise<Todo[]> {
+    const where: Prisma.TodoWhereInput = {
+      userId,
+      ...(filter.deadlineToday && {
+        deadline: {
+          gte: dayjs().startOf('day').toDate(),
+          lte: dayjs().endOf('day').toDate(),
         },
-      ].filter(Boolean),
-    } as Prisma.TodoFindManyArgs;
+      }),
+      ...(filter.completed !== undefined && { completed: filter.completed }),
+      ...(filter.priority && { priority: filter.priority }),
+      ...(filter.deadlineBefore && { deadline: { lte: filter.deadlineBefore } }),
+      ...(filter.deadlineAfter && { deadline: { gte: filter.deadlineAfter } }),
+      ...(filter.search && { title: { contains: filter.search } }),
+    };
 
-    const todoData = await prisma.todo.findMany(query);
-    return todoData.map((todo) => new Todo(todo));
+    const orderBy: Prisma.TodoOrderByWithRelationInput[] = [];
+    if (filter.sortByPriority) {
+      orderBy.push({ priority: 'desc' });
+    }
+
+    const todoData = await prisma.todo.findMany({
+      where,
+      orderBy: orderBy.length ? orderBy : undefined,
+    });
+
+    return todoData.map((todo) => Todo.fromPrisma(todo)); // ✅ 統一 fromPrisma
   }
-  async save(todo: Todo): Promise<void> {
-    await prisma.todo.update({
+
+  async update(todo: Todo): Promise<Todo> {
+    if (todo.id === null) {
+      throw new Error('Cannot update a Todo without an ID');
+    }
+    const todoData = await prisma.todo.update({
       where: { id: todo.id },
       data: {
         title: todo.title,
@@ -58,30 +54,28 @@ export class PrismaTodoRepository implements TodoRepository {
         totalPomodoros: todo.totalPomodoros,
         completedPomodoros: todo.completedPomodoros,
         priority: todo.priority,
-        deadline: todo.deadline,
+        deadline: todo.deadline ? new Date(todo.deadline) : undefined,
       },
     });
+    return Todo.fromPrisma(todoData);
   }
-  async create(data: { title: string; userId: string }): Promise<Todo> {
-    const today = new Date();
-    today.setHours(23, 59, 59, 999); // 設置為今天的 23:59:59
 
+  async create(todo: Todo): Promise<Todo> {
     const todoData = await prisma.todo.create({
       data: {
-        title: data.title,
-        completed: false, // 默認為未完成
-        totalPomodoros: 1, // 默認需要 1 個番茄鐘
-        completedPomodoros: 0, // 默認完成 0 個番茄鐘
-        userId: data.userId, // 關聯到 User
-        deadline: today,
+        title: todo.title,
+        completed: todo.completed,
+        totalPomodoros: todo.totalPomodoros,
+        completedPomodoros: todo.completedPomodoros,
+        priority: todo.priority,
+        deadline: todo.deadline ? new Date(todo.deadline) : undefined,
+        userId: todo.userId,
       },
     });
-
-    return new Todo(todoData);
+    return Todo.fromPrisma(todoData);
   }
+
   async delete(id: number): Promise<void> {
-    await prisma.todo.delete({
-      where: { id },
-    });
+    await prisma.todo.delete({ where: { id } });
   }
 }

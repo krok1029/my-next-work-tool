@@ -1,5 +1,6 @@
 import { Todo as PrismaTodo, Priority } from '@prisma/client';
 import { cleanObject } from '@/lib/utils';
+
 export interface TodoFilter {
   deadlineToday?: boolean;
   sortByPriority?: boolean;
@@ -12,31 +13,70 @@ export interface TodoFilter {
 }
 
 export class Todo {
-  public readonly id: number;
+  public readonly id: number | null;
+  public readonly userId: string; // ✅ 加上 userId
   public title: string;
   public completed: boolean;
   public totalPomodoros: number;
   public completedPomodoros: number;
   public priority: Priority;
-  public deadline: string;
+  public deadline: string | null;
 
-  constructor({
-    id,
-    title,
-    completed,
-    totalPomodoros,
-    completedPomodoros,
-    priority,
-    deadline,
-  }: PrismaTodo) {
-    this;
-    this.id = id;
-    this.title = title;
-    this.completed = completed;
-    this.totalPomodoros = totalPomodoros;
-    this.completedPomodoros = completedPomodoros;
-    this.priority = priority;
-    this.deadline = deadline.toISOString();
+  constructor(params: {
+    id: number | null;
+    userId: string; // ✅ constructor 要有 userId
+    title: string;
+    completed?: boolean;
+    totalPomodoros?: number;
+    completedPomodoros?: number;
+    priority?: Priority;
+    deadline?: Date | string | null;
+  }) {
+    this.id = params.id;
+    this.userId = params.userId; // ✅
+    this.title = params.title;
+    this.completed = params.completed ?? false;
+    this.totalPomodoros = params.totalPomodoros ?? 1;
+    this.completedPomodoros = params.completedPomodoros ?? 0;
+    this.priority = params.priority ?? Priority.MEDIUM;
+    this.deadline = params.deadline
+      ? typeof params.deadline === 'string'
+        ? params.deadline
+        : params.deadline.toISOString()
+      : null;
+  }
+
+  static fromPrisma(prismaTodo: PrismaTodo) {
+    return new Todo({
+      id: prismaTodo.id,
+      userId: prismaTodo.userId, // ✅ 轉 Prisma 時也要帶 userId
+      title: prismaTodo.title,
+      completed: prismaTodo.completed,
+      totalPomodoros: prismaTodo.totalPomodoros,
+      completedPomodoros: prismaTodo.completedPomodoros,
+      priority: prismaTodo.priority,
+      deadline: prismaTodo.deadline,
+    });
+  }
+
+  static createNew(
+    userId: string, // ✅ createNew 也要 userId
+    title: string,
+    totalPomodoros: number = 1,
+    priority: Priority = Priority.MEDIUM,
+    deadline?: Date | null
+  ) {
+    if (!title || title.trim().length === 0) {
+      throw new Error('Title cannot be empty');
+    }
+    return new Todo({
+      id: null,
+      userId,
+      title: title.trim(),
+      totalPomodoros,
+      priority,
+      deadline: deadline ?? null,
+    });
   }
 
   complete() {
@@ -48,7 +88,7 @@ export class Todo {
 
   consumePomodoro() {
     if (this.completedPomodoros >= this.totalPomodoros) {
-      throw new Error('Todo is already completed');
+      throw new Error('All pomodoros are already completed');
     }
     this.completedPomodoros++;
     if (this.completedPomodoros === this.totalPomodoros) {
@@ -56,7 +96,7 @@ export class Todo {
     }
   }
 
-  update(fields: Partial<Omit<Todo, 'id'>>) {
+  update(fields: Partial<Omit<Todo, 'id' | 'userId'>>) { // ✅ userId 不能被 update
     const filteredFields = cleanObject(fields);
     Object.assign(this, filteredFields);
   }
