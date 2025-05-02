@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import '@/infrastructure/di/Container';
 import { NextRequest, NextResponse } from 'next/server';
 import { container } from 'tsyringe';

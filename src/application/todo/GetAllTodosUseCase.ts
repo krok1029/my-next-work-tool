@@ -1,6 +1,5 @@
 // application/todo/GetAllTodosUseCase.ts
 import '@/infrastructure/di/Container';
-import 'reflect-metadata';
 import type { TodoRepository } from '@/domain/todo/TodoRepository';
 import { injectable, inject } from 'tsyringe';
 import { AUTH, TODO } from '@/infrastructure/di/DependencyInjectionTokens';

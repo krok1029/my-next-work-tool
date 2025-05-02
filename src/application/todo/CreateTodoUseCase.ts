@@ -1,5 +1,4 @@
 import '@/infrastructure/di/Container';
-import 'reflect-metadata';
 import { injectable, inject } from 'tsyringe';
 
 import { TODO, AUTH } from '@/infrastructure/di/DependencyInjectionTokens';

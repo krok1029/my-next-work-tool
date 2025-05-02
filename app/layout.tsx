@@ -1,6 +1,4 @@
 import type { Metadata, Viewport } from 'next';
-import 'reflect-metadata';
-import '@/infrastructure/di/Container';
 import { Inter as FontSans } from 'next/font/google';
 import '@/styles/globals.css';
 import { cn } from '@/lib/utils';
