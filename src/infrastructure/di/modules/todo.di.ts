@@ -9,14 +9,21 @@ import { GetAllTodosUseCase } from '@/application/todo/GetAllTodosUseCase';
 import { GetTodoUseCase } from '@/application/todo/GetTodoUseCase';
 import { UpdateTodoUseCase } from '@/application/todo/UpdateTodoUseCase';
 import { DeleteTodoUseCase } from '@/application/todo/DeleteTodoUseCase';
+import { ConsumePomodoroUseCase } from '@/application/todo/ConsumePomodoroUseCase';
 
 export function registerTodoModule() {
   if (!container.isRegistered(TODO.Repo)) {
-    container.registerSingleton<TodoRepository>(TODO.Repo, PrismaTodoRepository);
+    container.registerSingleton<TodoRepository>(
+      TODO.Repo,
+      PrismaTodoRepository
+    );
   }
 
   if (!container.isRegistered(TODO.Controller)) {
-    container.registerSingleton<TodoController>(TODO.Controller, TodoController);
+    container.registerSingleton<TodoController>(
+      TODO.Controller,
+      TodoController
+    );
   }
 
   if (!container.isRegistered(TODO.CreateTodoUseCase)) {
@@ -37,5 +44,12 @@ export function registerTodoModule() {
 
   if (!container.isRegistered(TODO.DeleteTodoUseCase)) {
     container.registerSingleton(TODO.DeleteTodoUseCase, DeleteTodoUseCase);
+  }
+
+  if (!container.isRegistered(TODO.ConsumePomodoroUseCase)) {
+    container.registerSingleton(
+      TODO.ConsumePomodoroUseCase,
+      ConsumePomodoroUseCase
+    );
   }
 }

@@ -1,25 +1,20 @@
 import '@/infrastructure/di/Container';
 import { NextRequest, NextResponse } from 'next/server';
 import { container } from 'tsyringe';
-import { ConsumePomodoroUseCase } from '@/application/todo/ConsumePomodoroUseCase';
-import { GetTodoUseCase } from '@/application/todo/GetTodoUseCase';
 import { ZodError } from 'zod';
+import { TodoController } from '@/interface-adapters/controllers/TodoController';
 
 export async function POST(
   _req: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const { id } = params;
-
   try {
-    // 提取已驗證的數據
-    const consumePomodoroUseCase = container.resolve(ConsumePomodoroUseCase);
-    await consumePomodoroUseCase.execute(Number(id));
+    const { id } = params;
+    const todoController = container.resolve(TodoController);
+    await todoController.consumePomodoro(Number(id));
+    const newTodo = await todoController.get(Number(id));
 
-    const getTodoUseCase = container.resolve(GetTodoUseCase);
-    const updatedTodo = await getTodoUseCase.execute(Number(id));
-
-    return NextResponse.json(updatedTodo, { status: 200 });
+    return NextResponse.json(newTodo, { status: 200 });
   } catch (error) {
     if (error instanceof ZodError) {
       return NextResponse.json({ message: error.errors }, { status: 400 });

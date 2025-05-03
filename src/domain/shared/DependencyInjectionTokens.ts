@@ -1,6 +1,5 @@
 // src/domain/shared/DependencyInjectionTokens.ts
 
-
 export const AUTH = { Service: 'AuthService' } as const;
 export const TODO = {
   Repo: 'TodoRepository',
@@ -10,6 +9,6 @@ export const TODO = {
   GetAllTodosUseCase: 'GetAllTodosUseCase',
   GetTodoUseCase: 'GetTodoUseCase',
   DeleteTodoUseCase: 'DeleteTodoUseCase',
-
+  ConsumePomodoroUseCase: 'ConsumePomodoroUseCase',
 } as const;
 export const USER = { Repo: 'UserRepository' } as const;

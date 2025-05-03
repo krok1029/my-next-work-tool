@@ -8,6 +8,7 @@ import type { GetAllTodosUseCase } from '@/application/todo/GetAllTodosUseCase';
 import type { UpdateTodoUseCase } from '@/application/todo/UpdateTodoUseCase';
 import type { GetTodoUseCase } from '@/application/todo/GetTodoUseCase';
 import type { DeleteTodoUseCase } from '@/application/todo/DeleteTodoUseCase';
+import type { ConsumePomodoroUseCase } from '@/application/todo/ConsumePomodoroUseCase';
 import { AuthenticationError, NotFoundError } from '@/domain/shared/Error';
 import { ZodError } from 'zod';
 
@@ -24,7 +25,9 @@ export class TodoController {
     @inject(TODO.UpdateTodoUseCase)
     private readonly updateTodoUseCase: UpdateTodoUseCase,
     @inject(TODO.DeleteTodoUseCase)
-    private readonly deleteTodoUseCase: DeleteTodoUseCase
+    private readonly deleteTodoUseCase: DeleteTodoUseCase,
+    @inject(TODO.ConsumePomodoroUseCase)
+    private readonly consumePomodoroUseCase: ConsumePomodoroUseCase
   ) {}
 
   /**
@@ -175,6 +178,41 @@ export class TodoController {
         throw new Error(`Failed to delete todo: ${error.message}`);
       }
       throw new Error('Failed to delete todo');
+    }
+  }
+  /**
+   * 消耗 Pomodoro
+   * @param id - Todo 的 ID
+   */
+  async consumePomodoro(id: number): Promise<Todo> {
+    try {
+      const session = await this.authService.getSession();
+      if (!session.success || !session.data) {
+        throw new AuthenticationError('User not authenticated');
+      }
+
+      // 先獲取 Todo 以確認它存在
+      const todo = await this.getTodoUseCase.execute(id);
+      if (!todo) {
+        throw new NotFoundError(`Todo with id ${id} not found`);
+      }
+      // 調用 Use Case 消耗 Pomodoro
+      await this.consumePomodoroUseCase.execute(todo);
+
+      // 獲取更新後的 Todo
+      return await this.getTodoUseCase.execute(id);
+    } catch (error) {
+      if (error instanceof AuthenticationError) {
+        throw error; // 重新拋出認證錯誤
+      }
+      if (error instanceof NotFoundError) {
+        throw new Error(`NotFoundError: ${error.message}`);
+      }
+      // 其他錯誤處理
+      if (error instanceof Error) {
+        throw new Error(`Failed to consume pomodoro: ${error.message}`);
+      }
+      throw new Error('Failed to consume pomodoro');
     }
   }
 }
