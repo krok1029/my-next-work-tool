@@ -1,5 +1,6 @@
 import React from 'react';
 import { redirect } from 'next/navigation';
+import "reflect-metadata"
 import { container } from 'tsyringe';
 import { cn } from '@/lib/utils';
 import { CheckSessionUseCase } from '@/application/auth/CheckSessionUseCase';
@@ -29,7 +30,7 @@ export default async function Home() {
   return (
     <div className="grid grid-cols-1 gap-2 pt-8 md:grid-cols-2 lg:grid-cols-3">
       {defaultCards.map((card) => (
-        <div className={cn(card.className, 'h-96')}>
+        <div key={card.id} className={cn(card.className, 'h-96')}>
           <Card className={cn('h-full p-3')}>{card.element}</Card>
         </div>
       ))}
