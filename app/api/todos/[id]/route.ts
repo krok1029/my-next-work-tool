@@ -1,4 +1,4 @@
-import "server-only"
+import 'server-only';
 
 import '@/infrastructure/di/Container';
 import { NextRequest, NextResponse } from 'next/server';
@@ -8,16 +8,16 @@ import { GetTodoUseCase } from '@/application/todo/GetTodoUseCase';
 import { DeleteTodoUseCase } from '@/application/todo/DeleteTodoUseCase';
 import { putTodoValidator, validatePayload } from '@/lib/validators';
 import { ZodError } from 'zod';
+import { TodoController } from '@/interface-adapters/controllers/TodoController';
 
 export async function GET(
   _req: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const { id } = params;
-
   try {
-    const getTodoUseCase = container.resolve(GetTodoUseCase);
-    const todo = await getTodoUseCase.execute(Number(id));
+    const { id } = params;
+    const todoController = container.resolve(TodoController);
+    const todo = await todoController.get(Number(id));
 
     return NextResponse.json(todo, { status: 200 });
   } catch (error) {
@@ -35,16 +35,11 @@ export async function PATCH(
   const { id } = params;
 
   try {
-    const parsedBody = await validatePayload(putTodoValidator)(req);
+    const todoController = container.resolve(TodoController);
+    const body = await req.json();
+    const newTodo = await todoController.update(Number(id), body);
 
-    // 提取已驗證的數據
-    const updateTodoUseCase = container.resolve(UpdateTodoUseCase);
-    await updateTodoUseCase.execute(Number(id), parsedBody);
-
-    const getTodoUseCase = container.resolve(GetTodoUseCase);
-    const updatedTodo = await getTodoUseCase.execute(Number(id));
-
-    return NextResponse.json(updatedTodo, { status: 200 });
+    return NextResponse.json(newTodo, { status: 200 });
   } catch (error) {
     if (error instanceof ZodError) {
       return NextResponse.json({ message: error.errors }, { status: 400 });

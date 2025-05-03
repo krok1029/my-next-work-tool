@@ -9,13 +9,8 @@ import { Todo } from '@/domain/todo/Todo';
 export class UpdateTodoUseCase {
   constructor(@inject(TODO.Repo) private todoRepository: TodoRepository) {}
 
-  async execute(id: number, updatedFields: Partial<Omit<Todo, 'id'>>) {
-    const todo = await this.todoRepository.findById(id);
-    if (!todo) {
-      throw new Error('Todo not found');
-    }
-
+  async execute(todo: Todo, updatedFields: Partial<Omit<Todo, 'id'>>) {
     todo.update(updatedFields);
-    await this.todoRepository.update(todo);
+    return await this.todoRepository.update(todo);
   }
 }
