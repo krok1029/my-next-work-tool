@@ -3,7 +3,6 @@ import 'server-only';
 import '@/infrastructure/di/Container';
 import { NextRequest, NextResponse } from 'next/server';
 import { container } from 'tsyringe';
-import { DeleteTodoUseCase } from '@/application/todo/DeleteTodoUseCase';
 import { ZodError } from 'zod';
 import { TodoController } from '@/interface-adapters/controllers/TodoController';
 
