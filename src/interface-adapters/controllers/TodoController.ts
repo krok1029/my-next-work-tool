@@ -6,9 +6,10 @@ import type { AuthService } from '@/domain/auth/AuthService';
 import type { CreateTodoUseCase } from '@/application/todo/CreateTodoUseCase';
 import type { GetAllTodosUseCase } from '@/application/todo/GetAllTodosUseCase';
 import type { UpdateTodoUseCase } from '@/application/todo/UpdateTodoUseCase';
+import type { GetTodoUseCase } from '@/application/todo/GetTodoUseCase';
+import type { DeleteTodoUseCase } from '@/application/todo/DeleteTodoUseCase';
 import { AuthenticationError, NotFoundError } from '@/domain/shared/Error';
 import { ZodError } from 'zod';
-import { GetTodoUseCase } from '@/application/todo/GetTodoUseCase';
 
 @injectable()
 export class TodoController {
@@ -21,7 +22,9 @@ export class TodoController {
     @inject(TODO.GetTodoUseCase)
     private readonly getTodoUseCase: GetTodoUseCase,
     @inject(TODO.UpdateTodoUseCase)
-    private readonly updateTodoUseCase: UpdateTodoUseCase
+    private readonly updateTodoUseCase: UpdateTodoUseCase,
+    @inject(TODO.DeleteTodoUseCase)
+    private readonly deleteTodoUseCase: DeleteTodoUseCase
   ) {}
 
   /**
@@ -138,6 +141,40 @@ export class TodoController {
         throw new Error(`Failed to update todo: ${error.message}`);
       }
       throw new Error('Failed to update todo');
+    }
+  }
+
+  /**
+   * 刪除 Todo
+   * @param id - Todo 的 ID
+   */
+  async delete(id: number): Promise<void> {
+    try {
+      const session = await this.authService.getSession();
+      if (!session.success || !session.data) {
+        throw new AuthenticationError('User not authenticated');
+      }
+
+      // 先獲取 Todo 以確認它存在
+      const todo = await this.getTodoUseCase.execute(id);
+      if (!todo) {
+        throw new NotFoundError(`Todo with id ${id} not found`);
+      }
+
+      // 調用 Use Case 刪除 Todo
+      await this.deleteTodoUseCase.execute(id);
+    } catch (error) {
+      if (error instanceof AuthenticationError) {
+        throw error; // 重新拋出認證錯誤
+      }
+      if (error instanceof NotFoundError) {
+        throw new Error(`NotFoundError: ${error.message}`);
+      }
+      // 其他錯誤處理
+      if (error instanceof Error) {
+        throw new Error(`Failed to delete todo: ${error.message}`);
+      }
+      throw new Error('Failed to delete todo');
     }
   }
 }
