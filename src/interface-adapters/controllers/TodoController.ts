@@ -5,6 +5,8 @@ import { TODO, AUTH } from '@/domain/shared/DependencyInjectionTokens';
 import type { AuthService } from '@/domain/auth/AuthService';
 import type { CreateTodoUseCase } from '@/application/todo/CreateTodoUseCase';
 import type { GetAllTodosUseCase } from '@/application/todo/GetAllTodosUseCase';
+import { AuthenticationError } from '@/domain/shared/Error';
+import { ZodError } from 'zod';
 
 @injectable()
 export class TodoController {
@@ -23,12 +25,19 @@ export class TodoController {
     try {
       const session = await this.authService.getSession();
       if (!session.success || !session.data) {
-        throw new Error('User not authenticated');
+        throw new AuthenticationError('User not authenticated');
       }
       const userId = session.data.userId;
 
       return await this.getAllTodosUseCase.execute(userId);
     } catch (error) {
+      if (error instanceof AuthenticationError) {
+        throw error; // 重新拋出認證錯誤
+      }
+      if (error instanceof Error) {
+        throw new Error(`Failed to fetch todos: ${error.message}`);
+      }
+      // 其他錯誤處理
       throw new Error('Failed to fetch todos');
     }
   }
@@ -39,12 +48,25 @@ export class TodoController {
    */
   async create(input: unknown): Promise<Todo> {
     try {
+      const session = await this.authService.getSession();
+      if (!session.success || !session.data) {
+        throw new AuthenticationError();
+      }
+      const userId = session.data.userId;
+
       // 驗證輸入數據
-      const validatedInput = postTodoValidator.parse(input);
+      const { title } = postTodoValidator.parse(input);
 
       // 調用 Use Case 創建 Todo
-      return await this.createTodoUseCase.execute(validatedInput);
+      return await this.createTodoUseCase.execute(title, userId);
     } catch (error) {
+      if (error instanceof AuthenticationError) {
+        throw error; // 重新拋出認證錯誤
+      }
+      if (error instanceof ZodError) {
+        throw new Error(`Invalid input: ${error.message}`);
+      }
+      // 其他錯誤處理
       if (error instanceof Error) {
         throw new Error(`Failed to create todo: ${error.message}`);
       }
