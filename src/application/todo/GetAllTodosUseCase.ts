@@ -2,22 +2,13 @@
 
 import type { TodoRepository } from '@/domain/todo/TodoRepository';
 import { injectable, inject } from 'tsyringe';
-import { AUTH, TODO } from '@/domain/shared/DependencyInjectionTokens';
-import type { AuthService } from '@/domain/auth/AuthService';
+import { TODO } from '@/domain/shared/DependencyInjectionTokens';
 
 @injectable()
 export class GetAllTodosUseCase {
-  constructor(
-    @inject(TODO.Repo) private todoRepository: TodoRepository,
-    @inject(AUTH.Service) private authService: AuthService
-  ) {}
+  constructor(@inject(TODO.Repo) private todoRepository: TodoRepository) {}
 
-  async execute() {
-    const session = await this.authService.getSession();
-    if (!session.success || !session.data) {
-      throw new Error('User not authenticated');
-    }
-    const userId = session.data.userId;
+  async execute(userId: string) {
     return this.todoRepository.findAllByUser(userId, {
       deadlineToday: false,
       sortByPriority: true,
