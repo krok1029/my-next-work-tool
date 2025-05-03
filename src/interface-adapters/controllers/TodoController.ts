@@ -31,26 +31,44 @@ export class TodoController {
   ) {}
 
   /**
+   * 驗證用戶是否已認證
+   */
+  private async ensureAuthenticated(): Promise<string> {
+    const session = await this.authService.getSession();
+    if (!session.success || !session.data) {
+      throw new AuthenticationError('User not authenticated');
+    }
+    return session.data.userId;
+  }
+
+  /**
+   * 統一的錯誤處理
+   */
+  private handleError(error: unknown, defaultMessage: string): never {
+    if (error instanceof AuthenticationError) {
+      throw error; // 重新拋出認證錯誤
+    }
+    if (error instanceof NotFoundError) {
+      throw new Error(`NotFoundError: ${error.message}`);
+    }
+    if (error instanceof ZodError) {
+      throw new Error(`Invalid input: ${error.message}`);
+    }
+    if (error instanceof Error) {
+      throw new Error(`${defaultMessage}: ${error.message}`);
+    }
+    throw new Error(defaultMessage);
+  }
+
+  /**
    * 獲取所有 Todos
    */
   async getAll(): Promise<Todo[]> {
     try {
-      const session = await this.authService.getSession();
-      if (!session.success || !session.data) {
-        throw new AuthenticationError('User not authenticated');
-      }
-      const userId = session.data.userId;
-
+      const userId = await this.ensureAuthenticated();
       return await this.getAllTodosUseCase.execute(userId);
     } catch (error) {
-      if (error instanceof AuthenticationError) {
-        throw error; // 重新拋出認證錯誤
-      }
-      if (error instanceof Error) {
-        throw new Error(`Failed to fetch todos: ${error.message}`);
-      }
-      // 其他錯誤處理
-      throw new Error('Failed to fetch todos');
+      this.handleError(error, 'Failed to fetch todos');
     }
   }
 
@@ -60,24 +78,10 @@ export class TodoController {
    */
   async get(id: number): Promise<Todo> {
     try {
-      const session = await this.authService.getSession();
-      if (!session.success || !session.data) {
-        throw new AuthenticationError('User not authenticated');
-      }
-
+      await this.ensureAuthenticated();
       return await this.getTodoUseCase.execute(id);
     } catch (error) {
-      if (error instanceof AuthenticationError) {
-        throw error; // 重新拋出認證錯誤
-      }
-      if (error instanceof NotFoundError) {
-        throw new Error(`NotFoundError: ${error.message}`);
-      }
-      if (error instanceof Error) {
-        throw new Error(`Failed to fetch todo: ${error.message}`);
-      }
-      // 其他錯誤處理
-      throw new Error('Failed to fetch todo');
+      this.handleError(error, 'Failed to fetch todo');
     }
   }
 
@@ -87,31 +91,14 @@ export class TodoController {
    */
   async create(input: unknown): Promise<Todo> {
     try {
-      const session = await this.authService.getSession();
-      if (!session.success || !session.data) {
-        throw new AuthenticationError();
-      }
-      const userId = session.data.userId;
-
-      // 驗證輸入數據
+      const userId = await this.ensureAuthenticated();
       const { title } = postTodoValidator.parse(input);
-
-      // 調用 Use Case 創建 Todo
       return await this.createTodoUseCase.execute(title, userId);
     } catch (error) {
-      if (error instanceof AuthenticationError) {
-        throw error; // 重新拋出認證錯誤
-      }
-      if (error instanceof ZodError) {
-        throw new Error(`Invalid input: ${error.message}`);
-      }
-      // 其他錯誤處理
-      if (error instanceof Error) {
-        throw new Error(`Failed to create todo: ${error.message}`);
-      }
-      throw new Error('Failed to create todo');
+      this.handleError(error, 'Failed to create todo');
     }
   }
+
   /**
    * 更新 Todo
    * @param id - Todo 的 ID
@@ -119,31 +106,12 @@ export class TodoController {
    */
   async update(id: number, input: unknown): Promise<Todo> {
     try {
-      const session = await this.authService.getSession();
-      if (!session.success || !session.data) {
-        throw new AuthenticationError('User not authenticated');
-      }
-
-      // 驗證輸入數據
+      await this.ensureAuthenticated();
       const updatedFields = postTodoValidator.parse(input);
       const todo = await this.getTodoUseCase.execute(id);
-      // 調用 Use Case 更新 Todo
       return await this.updateTodoUseCase.execute(todo, updatedFields);
     } catch (error) {
-      if (error instanceof AuthenticationError) {
-        throw error; // 重新拋出認證錯誤
-      }
-      if (error instanceof NotFoundError) {
-        throw new Error(`NotFoundError: ${error.message}`);
-      }
-      if (error instanceof ZodError) {
-        throw new Error(`Invalid input: ${error.message}`);
-      }
-      // 其他錯誤處理
-      if (error instanceof Error) {
-        throw new Error(`Failed to update todo: ${error.message}`);
-      }
-      throw new Error('Failed to update todo');
+      this.handleError(error, 'Failed to update todo');
     }
   }
 
@@ -153,66 +121,32 @@ export class TodoController {
    */
   async delete(id: number): Promise<void> {
     try {
-      const session = await this.authService.getSession();
-      if (!session.success || !session.data) {
-        throw new AuthenticationError('User not authenticated');
-      }
-
-      // 先獲取 Todo 以確認它存在
+      await this.ensureAuthenticated();
       const todo = await this.getTodoUseCase.execute(id);
       if (!todo) {
         throw new NotFoundError(`Todo with id ${id} not found`);
       }
-
-      // 調用 Use Case 刪除 Todo
       await this.deleteTodoUseCase.execute(id);
     } catch (error) {
-      if (error instanceof AuthenticationError) {
-        throw error; // 重新拋出認證錯誤
-      }
-      if (error instanceof NotFoundError) {
-        throw new Error(`NotFoundError: ${error.message}`);
-      }
-      // 其他錯誤處理
-      if (error instanceof Error) {
-        throw new Error(`Failed to delete todo: ${error.message}`);
-      }
-      throw new Error('Failed to delete todo');
+      this.handleError(error, 'Failed to delete todo');
     }
   }
+
   /**
    * 消耗 Pomodoro
    * @param id - Todo 的 ID
    */
   async consumePomodoro(id: number): Promise<Todo> {
     try {
-      const session = await this.authService.getSession();
-      if (!session.success || !session.data) {
-        throw new AuthenticationError('User not authenticated');
-      }
-
-      // 先獲取 Todo 以確認它存在
+      await this.ensureAuthenticated();
       const todo = await this.getTodoUseCase.execute(id);
       if (!todo) {
         throw new NotFoundError(`Todo with id ${id} not found`);
       }
-      // 調用 Use Case 消耗 Pomodoro
       await this.consumePomodoroUseCase.execute(todo);
-
-      // 獲取更新後的 Todo
       return await this.getTodoUseCase.execute(id);
     } catch (error) {
-      if (error instanceof AuthenticationError) {
-        throw error; // 重新拋出認證錯誤
-      }
-      if (error instanceof NotFoundError) {
-        throw new Error(`NotFoundError: ${error.message}`);
-      }
-      // 其他錯誤處理
-      if (error instanceof Error) {
-        throw new Error(`Failed to consume pomodoro: ${error.message}`);
-      }
-      throw new Error('Failed to consume pomodoro');
+      this.handleError(error, 'Failed to consume pomodoro');
     }
   }
 }
