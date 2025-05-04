@@ -10,6 +10,9 @@ export async function GET() {
 
     return NextResponse.json(user);
   } catch (error) {
+    if (error instanceof Error) {
+      return NextResponse.json({ message: error.message }, { status: 500 });
+    }
     return NextResponse.json(
       { message: 'Failed to fetch todos' },
       { status: 500 }

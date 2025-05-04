@@ -1,3 +1,5 @@
+# My Next Work Tool
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
@@ -19,6 +21,27 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+
+## ESLint Configuration
+
+This project uses ESLint for code quality and consistency. The configuration includes:
+
+- Next.js core web vitals rules
+- TypeScript-specific rules
+- React hooks rules
+- Unused variables detection
+
+To run the linter:
+
+```bash
+# Check for issues
+bun run lint
+
+# Fix automatically fixable issues
+bun run lint:fix
+```
+
+VSCode is configured to show ESLint warnings and errors directly in the editor, and can automatically fix issues on save.
 
 ## Learn More
 

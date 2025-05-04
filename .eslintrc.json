@@ -1,19 +1,39 @@
 {
+  "root": true,
+  "extends": ["next/core-web-vitals"],
+  "plugins": ["@typescript-eslint"],
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint", "unused-imports", "react", "react-hooks"],
-  "extends": [
-    "next/core-web-vitals",
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-    "prettier"
-  ],
   "rules": {
-    "unused-imports/no-unused-imports": "error",
-    "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn"
+    "no-console": ["warn", { "allow": ["warn", "error", "info"] }],
+    "prefer-const": "warn",
+    "react/jsx-key": "error",
+    "react-hooks/exhaustive-deps": "warn",
+
+    // 關閉原生的 no-unused-vars 規則
+    "no-unused-vars": "off",
+
+    // 使用 TypeScript 特定的未使用變數規則
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      {
+        "vars": "all",
+        "args": "after-used",
+        "ignoreRestSiblings": true,
+        "caughtErrorsIgnorePattern": "^_",
+        "destructuredArrayIgnorePattern": "^_",
+        "argsIgnorePattern": "^_|props$",
+        "varsIgnorePattern": "^_|^React$|^useState$|^useEffect$|^FC$|^Props$|^T$|^I[A-Z][a-zA-Z0-9]*$"
+      }
+    ]
   },
-  "parserOptions": {
-    "ecmaVersion": 2020,
-    "sourceType": "module"
-  }
+  "ignorePatterns": [
+    "public/sw.js",
+    "public/workbox-*.js",
+    "**/*.d.ts",
+    "node_modules/**",
+    ".next/**",
+    "out/**",
+    "build/**",
+    "dist/**"
+  ]
 }

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { mutate } from 'swr';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Todo } from '@prisma/client';
@@ -15,7 +14,6 @@ import {
 import clsx from 'clsx';
 import { cn } from '@/lib/utils';
 import { useTodoStore } from '@/lib/zustandStore';
-import { deleteTodo } from '@/lib/api/todos';
 import DeleteDialog from '@/components/todos/DeleteDialog';
 
 const TodoItem = ({
@@ -25,7 +23,7 @@ const TodoItem = ({
   todo: Todo;
   setIsOpen: (open: boolean) => void;
 }) => {
-  const { id, title, completed, totalPomodoros, completedPomodoros } = todo;
+  const { title, completed, totalPomodoros, completedPomodoros } = todo;
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const { selectedTodo, setSelectedTodo, isInProgress } = useTodoStore();
 

@@ -54,7 +54,7 @@ const mockSearch = async (value: string): Promise<Option[]> => {
 };
 
 const MultipleSelectorWithAsyncSearchAndCreatable = () => {
-  const [isTriggered, setIsTriggered] = useState(false);
+  const [_isTrigger, setIsTriggered] = useState(false);
 
   return (
     <div className="flex w-full flex-col gap-5 px-10">
@@ -65,9 +65,9 @@ const MultipleSelectorWithAsyncSearchAndCreatable = () => {
           setIsTriggered(false);
           return res;
         }}
-        onChange={(value) => {
-          console.log(value);
-        }}
+        // onChange={(value) => {
+        //   console.log(value);
+        // }}
         defaultOptions={[]}
         creatable={true}
         placeholder="trying to search 'a' to get more options..."

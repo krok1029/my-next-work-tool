@@ -4,7 +4,6 @@ import '@/infrastructure/di/Container';
 import { container } from 'tsyringe';
 import { AuthController } from '@/interface-adapters/controllers/AuthController';
 import { signUpSchema } from '@/lib/validators';
-import { CreateUserUseCase } from '@/application/user/CreateUserUseCase';
 
 // 定義 Server Action
 export async function signUp(data: FormData) {

@@ -13,7 +13,7 @@ import {
 import { useEffect, useState } from 'react';
 
 export function ModeToggle() {
-  const { theme, setTheme } = useTheme();
+  const { setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   // 確保只在客戶端渲染後應用主題

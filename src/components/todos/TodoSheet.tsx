@@ -34,7 +34,7 @@ const TodoSheet: React.FC<{
       setIsOpen(false);
       clearSelectedTodo();
     }
-  }, [selectedTodo]);
+  }, [selectedTodo, clearSelectedTodo, form, setIsOpen]);
 
   const onOpenChange = (open: boolean) => {
     setIsOpen(false);
