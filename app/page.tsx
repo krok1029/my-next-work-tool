@@ -1,12 +1,13 @@
+import '@/infrastructure/di/Container';
+import { container } from 'tsyringe';
 import React from 'react';
 import { redirect } from 'next/navigation';
-import "reflect-metadata"
-import { container } from 'tsyringe';
 import { cn } from '@/lib/utils';
-import { CheckSessionUseCase } from '@/application/auth/CheckSessionUseCase';
 import Todos from '@/components/todos/Todos';
 import { Card } from '@/components/ui/card';
 import CountdownTimer from './dashboard/CountdownTimer';
+import { AuthController } from '@/interface-adapters/controllers/AuthController';
+import { AuthenticationError } from '@/domain/shared/Error';
 
 const defaultCards = [
   {
@@ -19,21 +20,22 @@ const defaultCards = [
 ];
 
 export default async function Home() {
-  const checkSessionUseCase = container.resolve(CheckSessionUseCase);
-  const { success, data } = await checkSessionUseCase.execute();
+  try {
+    const controller = container.resolve(AuthController);
+    await controller.checkSession();
 
-  if (!success || !data) {
-    // 如果沒有 session，重定向到登入頁面
-    redirect('/user/signin');
+    return (
+      <div className="grid grid-cols-1 gap-2 pt-8 md:grid-cols-2 lg:grid-cols-3">
+        {defaultCards.map((card) => (
+          <div key={card.id} className={cn(card.className, 'h-96')}>
+            <Card className={cn('h-full p-3')}>{card.element}</Card>
+          </div>
+        ))}
+      </div>
+    );
+  } catch (error) {
+    if (error instanceof AuthenticationError) {
+      redirect('user/signin');
+    }
   }
-
-  return (
-    <div className="grid grid-cols-1 gap-2 pt-8 md:grid-cols-2 lg:grid-cols-3">
-      {defaultCards.map((card) => (
-        <div key={card.id} className={cn(card.className, 'h-96')}>
-          <Card className={cn('h-full p-3')}>{card.element}</Card>
-        </div>
-      ))}
-    </div>
-  );
 }

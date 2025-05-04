@@ -2,7 +2,7 @@
 
 import '@/infrastructure/di/Container';
 import { container } from 'tsyringe';
-import { SignUpUserUseCase } from '@/application/auth/SignUpUserUseCase';
+import { AuthController } from '@/interface-adapters/controllers/AuthController';
 import { signUpSchema } from '@/lib/validators';
 import { CreateUserUseCase } from '@/application/user/CreateUserUseCase';
 
@@ -19,19 +19,10 @@ export async function signUp(data: FormData) {
   try {
     signUpSchema.parse(formValues);
 
-    const signUpUserUseCase = container.resolve(SignUpUserUseCase);
-    const createUserUseCase = container.resolve(CreateUserUseCase);
+    const controller = container.resolve(AuthController);
 
-    const userId = await signUpUserUseCase.execute(
-      formValues.email,
-      formValues.password
-    );
+    await controller.signUp(data);
 
-    const newUser = await createUserUseCase.execute({
-      userId,
-      email: formValues.email,
-      name: `${formValues.firstName} ${formValues.lastName}`,
-    });
     return { success: true, message: 'User created successfully' };
   } catch (error: any) {
     return { success: false, message: error.message };

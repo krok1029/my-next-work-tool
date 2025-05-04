@@ -1,12 +1,12 @@
 import '@/infrastructure/di/Container';
 import { NextResponse } from 'next/server';
 import { container } from 'tsyringe';
-import { GetUserUseCase } from '@/application/user/GetUserUseCase';
+import { UserController } from '@/interface-adapters/controllers/UserController';
 
 export async function GET() {
   try {
-    const getUserUseCase = container.resolve(GetUserUseCase);
-    const user = await getUserUseCase.execute();
+    const controller = container.resolve(UserController);
+    const user = await controller.getUser();
 
     return NextResponse.json(user);
   } catch (error) {

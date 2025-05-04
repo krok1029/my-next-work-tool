@@ -2,14 +2,14 @@
 
 import '@/infrastructure/di/Container';
 import { container } from 'tsyringe';
-import { SignOutUserUseCase } from '@/application/auth/SignOutUserUseCase';
+import { AuthController } from '@/interface-adapters/controllers/AuthController';
 
 // 定義 Server Action
 export async function signOut() {
   try {
-    const signOutUserUseCase = container.resolve(SignOutUserUseCase);
+    const controller = container.resolve(AuthController);
 
-    await signOutUserUseCase.execute();
+    await controller.signOut();
     return { success: true, message: 'User signOut successfully' };
   } catch (error: any) {
     return { success: false, message: error.message };

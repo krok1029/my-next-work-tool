@@ -2,7 +2,7 @@
 
 import '@/infrastructure/di/Container';
 import { container } from 'tsyringe';
-import { SignInUserUseCase } from '@/application/auth/SignInUserUseCase';
+import { AuthController } from '@/interface-adapters/controllers/AuthController';
 import { signInSchema } from '@/lib/validators';
 
 // 定義 Server Action
@@ -13,13 +13,9 @@ export async function signIn(data: FormData) {
   };
   try {
     signInSchema.parse(formValues);
+    const controller = container.resolve(AuthController);
+    await controller.signIn(formValues.email, formValues.password);
 
-    const signInUserUseCase = container.resolve(SignInUserUseCase);
-
-    const res = await signInUserUseCase.execute(
-      formValues.email,
-      formValues.password
-    );
     return { success: true, message: 'User signin successfully' };
   } catch (error: any) {
     return { success: false, message: error.message };
@@ -27,19 +23,13 @@ export async function signIn(data: FormData) {
 }
 
 export async function demoSignIn() {
-  const formValues: Record<string, string> = {
-    email: process.env.DEMO_ACCOUNT!,
-    password: process.env.DEMO_PASSWORD!,
-  };
+  const DEMO_ACCOUNT = process.env.DEMO_ACCOUNT!;
+  const DEMO_PASSWORD = process.env.DEMO_PASSWORD!;
+
   try {
-    signInSchema.parse(formValues);
+    const controller = container.resolve(AuthController);
+    await controller.signIn(DEMO_ACCOUNT, DEMO_PASSWORD);
 
-    const signInUserUseCase = container.resolve(SignInUserUseCase);
-
-    const res = await signInUserUseCase.execute(
-      formValues.email,
-      formValues.password
-    );
     return { success: true, message: 'User signin successfully' };
   } catch (error: any) {
     return { success: false, message: error.message };
