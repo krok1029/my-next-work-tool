@@ -21,8 +21,7 @@
         "ignoreRestSiblings": true,
         "caughtErrorsIgnorePattern": "^_",
         "destructuredArrayIgnorePattern": "^_",
-        "argsIgnorePattern": "^_|props$",
-        "varsIgnorePattern": "^_|^React$|^useState$|^useEffect$|^FC$|^Props$|^T$|^I[A-Z][a-zA-Z0-9]*$"
+        "argsIgnorePattern": "^_|props$"
       }
     ]
   },

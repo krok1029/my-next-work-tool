@@ -73,11 +73,11 @@ export default function CountdownTimer() {
       setStatus(State.Work);
       setTimeLeft(workDuration);
     }
-  }, [selectedTodo?.id, setTimeLeft, workDuration]);
+  }, [selectedTodo, selectedTodo?.id, setTimeLeft, workDuration]);
 
   useEffect(() => {
     setTimeLeft(status === State.Work ? workDuration : breakDuration);
-  }, [status]);
+  }, [status, workDuration, breakDuration, setTimeLeft]);
 
   if (isLoading || !user) {
     return <div>Loading...</div>;
