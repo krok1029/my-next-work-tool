@@ -18,3 +18,17 @@ export const useTodoStore = create<todoState>((set) => ({
   startProgress: () => set({ isInProgress: true }), // 設置進行中為 true
   stopProgress: () => set({ isInProgress: false }), // 設置進行中為 false
 }));
+
+type LoadingState = {
+  loadingCounter: number;
+  incrementLoading: () => void;
+  decrementLoading: () => void;
+};
+
+export const useLoadingStore = create<LoadingState>((set) => ({
+  loadingCounter: 0,
+  incrementLoading: () =>
+    set((state) => ({ loadingCounter: state.loadingCounter + 1 })),
+  decrementLoading: () =>
+    set((state) => ({ loadingCounter: Math.max(state.loadingCounter - 1, 0) })),
+}));

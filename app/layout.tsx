@@ -1,4 +1,4 @@
-import "reflect-metadata"
+import 'reflect-metadata';
 import '@/infrastructure/di/Container';
 
 import type { Metadata, Viewport } from 'next';
@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/components/theme-provider';
 import Navbar from '@/components/custom/Navbar';
 import { Toaster } from '@/components/ui/toaster';
+import LoadingOverlay from '@/components/custom/LoadingOverlay';
 
 const APP_NAME = 'PWA App';
 const APP_DEFAULT_TITLE = 'My Awesome PWA App';
@@ -68,8 +69,9 @@ export default function RootLayout({
       >
         <ThemeProvider>
           <Navbar />
-          <div className="pt-16 min-h-dvh px-4 md:px-24">{children}</div>
+          <div className="min-h-dvh px-4 pt-16 md:px-24">{children}</div>
           <Toaster />
+          <LoadingOverlay />
         </ThemeProvider>
       </body>
     </html>

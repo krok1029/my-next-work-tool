@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { demoSignIn, signIn } from '@actions/auth/signIn';
 import { useToast } from '@hooks/use-toast';
+import { useLoadingStore } from '@/lib/zustandStore';
 
 function LoginForm() {
   const [isPending, startTransition] = useTransition();
@@ -29,16 +30,30 @@ function LoginForm() {
   };
 
   const handleSubmit = async (formData: FormData) => {
+    const { incrementLoading, decrementLoading } = useLoadingStore.getState();
+
     startTransition(async () => {
-      const result = await signIn(formData);
-      handleResult(result);
+      try {
+        incrementLoading();
+        const result = await signIn(formData);
+        handleResult(result);
+      } finally {
+        decrementLoading();
+      }
     });
   };
 
   const handleDemoLogin = () => {
+    const { incrementLoading, decrementLoading } = useLoadingStore.getState();
+
     startTransition(async () => {
-      const result = await demoSignIn();
-      handleResult(result);
+      try {
+        incrementLoading();
+        const result = await demoSignIn();
+        handleResult(result);
+      } finally {
+        decrementLoading();
+      }
     });
   };
 
