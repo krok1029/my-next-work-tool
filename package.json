@@ -3,13 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "bunx prisma generate && bun --bun run next dev",
-    "build": "bunx prisma generate && bun run next build",
-    "start": "dotenv -e .env.production bun run next start",
-    "lint": "bun run eslint .",
-    "lint:fix": "bun run eslint . --fix",
-    "migrate:dev": "bunx prisma migrate dev",
-    "migrate:prod": "dotenv -e .env.production -- bunx prisma migrate deploy"
+    "dev": "yarn prisma generate && yarn next dev",
+    "build": "yarn prisma generate && yarn next build",
+    "start": "dotenv -e .env.production yarn next start",
+    "lint": "yarn eslint .",
+    "lint:fix": "yarn eslint . --fix",
+    "migrate:dev": "yarn prisma migrate dev",
+    "migrate:prod": "dotenv -e .env.production -- yarn prisma migrate deploy"
   },
   "dependencies": {
     "@ducanh2912/next-pwa": "^10.2.9",
@@ -81,8 +81,5 @@
     "tailwindcss": "^3.4.1",
     "typescript": "^5",
     "webpack": "^5.95.0"
-  },
-  "resolutions": {
-    "lru-cache": "11.1.0"
   }
 }
