@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dialog';
 import { TodoDTO } from '@/interface-adapters/dto/TodoDTO';
 import { deleteTodo } from '@/lib/api/todos';
-import { mutate } from 'swr';
+import { useRouter } from 'next/navigation';
 
 const DeleteDialog = ({
   todo,
@@ -22,9 +22,10 @@ const DeleteDialog = ({
   open: boolean;
   setOpen: (open: boolean) => void;
 }) => {
+  const router = useRouter();
   const handleDelete = async () => {
     await deleteTodo(todo.id);
-    mutate('todos');
+    router.refresh();
     setOpen(false);
   };
 

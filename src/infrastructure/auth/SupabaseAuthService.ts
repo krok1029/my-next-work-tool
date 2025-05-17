@@ -13,7 +13,6 @@ export class SupabaseAuthService implements AuthService {
     password: string
   ): Promise<AuthResult<{ userId: string }>> {
     try {
-      console.log('signin');
       const supabase = createClientFromCookies(cookies());
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -33,7 +32,6 @@ export class SupabaseAuthService implements AuthService {
     password: string
   ): Promise<AuthResult<{ userId: string }>> {
     try {
-      console.log('signup');
       const supabase = createClientFromCookies(cookies());
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -56,7 +54,6 @@ export class SupabaseAuthService implements AuthService {
       const { user } = data;
 
       if (!user) {
-        console.log('No user found');
         return { success: true, data: null };
       }
 
@@ -73,10 +70,8 @@ export class SupabaseAuthService implements AuthService {
 
   async signOut(): Promise<AuthResult<void>> {
     try {
-      console.log('signOut');
       const supabase = createClientFromCookies(cookies());
       await supabase.auth.signOut();
-      console.log('Signing out');
       return { success: true };
     } catch (error) {
       return { success: false, error: error as Error };

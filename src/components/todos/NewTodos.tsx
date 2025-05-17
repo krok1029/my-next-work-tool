@@ -5,10 +5,12 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { createTodo } from '@/lib/api/todos';
 import { Plus } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 const NewTodos = () => {
   const [editedTitle, setEditedTitle] = useState('');
   const [isSaving, setIsSaving] = useState(false); // 用於防止重複提交和顯示加載狀態
+  const router = useRouter();
 
   const handleSave = async () => {
     if (!editedTitle.trim()) {
@@ -20,9 +22,9 @@ const NewTodos = () => {
     try {
       await createTodo({
         title: editedTitle,
-        completed: false,
       });
       setEditedTitle(''); // 重置輸入框
+      router.refresh();
     } catch (error) {
       console.error('Error:', error);
     } finally {

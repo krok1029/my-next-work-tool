@@ -3,21 +3,22 @@ import { useState } from 'react';
 import Link from 'next/link';
 
 import { Card, CardContent } from '@/components/ui/card';
-import { Todo } from '@prisma/client';
 import { Trash2 } from 'lucide-react';
 import clsx from 'clsx';
-
 import { Badge } from '@/components/ui/badge';
 import DeleteDialog from '@/components/todos/DeleteDialog';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { updateTodo } from '@/lib/api/todos';
+import { useRouter } from 'next/navigation';
+import { TodoDTO } from '@/interface-adapters/dto/TodoDTO';
 
-const TodoItem = ({ todo }: { todo: Todo }) => {
+const TodoItem = ({ todo }: { todo: TodoDTO }) => {
   const { id, title, completed, totalPomodoros } = todo;
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [editingTitle, setEditingTitle] = useState(false);
   const [editTotalPmomdoros, setEditTotalPmomdoros] = useState(false);
+  const router = useRouter();
 
   return (
     <div className="flex items-center gap-4">
@@ -45,6 +46,7 @@ const TodoItem = ({ todo }: { todo: Todo }) => {
                     if (e.key === 'Enter') {
                       setEditingTitle(false);
                       updateTodo(id, { title: e.currentTarget.value });
+                      router.refresh();
                     }
                   }}
                 />
@@ -75,6 +77,7 @@ const TodoItem = ({ todo }: { todo: Todo }) => {
                     updateTodo(id, {
                       totalPomodoros: Number(e.currentTarget.value),
                     });
+                    router.refresh();
                   }
                 }}
               />

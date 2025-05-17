@@ -8,7 +8,6 @@ export class CheckSessionUseCase {
   constructor(@inject(AUTH.Service) private authService: AuthService) {}
 
   async execute() {
-    console.log('CheckSessionUseCase');
     return await this.authService.getSession();
   }
 }

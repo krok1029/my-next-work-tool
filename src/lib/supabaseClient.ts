@@ -10,7 +10,6 @@ export const client = createBrowserClient(supabaseUrl, supabaseKey);
 
 export function createClient() {
   const cookieStore = cookies();
-  console.log('cookieStore', cookieStore.getAll());
   return createServerClient(supabaseUrl, supabaseKey, {
     cookies: {
       getAll() {
@@ -34,7 +33,6 @@ export function createClient() {
 export function createClientFromCookies(
   cookieStore: ReturnType<typeof cookies>
 ) {
-  console.log('🍪 cookies is empty', cookieStore.getAll().length === 0);
   return createServerClient(supabaseUrl, supabaseKey, {
     cookies: {
       getAll: () => cookieStore.getAll(),

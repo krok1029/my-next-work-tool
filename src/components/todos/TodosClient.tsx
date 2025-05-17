@@ -13,7 +13,7 @@ const TodosClient = ({ initialTodos }: { initialTodos: TodoDTO[] }) => {
     <>
       <NewTodos />
       <div className="max-h-72 overflow-y-auto">
-        {initialTodos?.map((todo) => (
+        {initialTodos.map((todo) => (
           <TodoItem key={todo.id} todo={todo} setIsOpen={setIsOpen} />
         ))}
       </div>

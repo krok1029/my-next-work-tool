@@ -23,7 +23,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Priority, Todo } from '@prisma/client';
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
@@ -36,8 +35,12 @@ import { mutate } from 'swr';
 import { toast } from '@hooks/use-toast';
 import { useTodoStore } from '@/lib/zustandStore';
 import { api } from '@/lib/api/client';
+import { TodoDTO } from '@/interface-adapters/dto/TodoDTO';
+import { Priority } from '@/domain/todo/TodoTypes';
 
-const EditTodoForm: React.FC<{ selectedTodo: Todo }> = ({ selectedTodo }) => {
+const EditTodoForm: React.FC<{ selectedTodo: TodoDTO }> = ({
+  selectedTodo,
+}) => {
   const { clearSelectedTodo } = useTodoStore();
   const form = useForm<z.infer<typeof putTodoValidator>>({
     resolver: zodResolver(putTodoValidator),

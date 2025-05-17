@@ -13,7 +13,6 @@ export class GetUserUseCase {
   ) {}
 
   async execute(): Promise<User> {
-    console.log('GetUserUseCase');
     const session = await this.authService.getSession();
     if (!session.success || !session.data) {
       throw new Error('User not authenticated');

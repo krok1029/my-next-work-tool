@@ -65,7 +65,6 @@ export class TodoController {
    */
   async getAll(): Promise<Todo[]> {
     try {
-      console.log('getAll todos');
       const userId = await this.ensureAuthenticated();
       return await this.getAllTodosUseCase.execute(userId);
     } catch (error) {
