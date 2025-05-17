@@ -1,4 +1,3 @@
-import { Todo as PrismaTodo } from '@prisma/client';
 import { cleanObject } from '@/lib/utils';
 import { Priority } from './TodoTypes';
 

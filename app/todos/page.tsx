@@ -9,6 +9,8 @@ import TodoItem from './_components/TodoItem';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import NewTodos from '@/components/todos/NewTodos';
 
+export const dynamic = 'force-dynamic';
+
 export default async function Todos() {
   const controller = container.resolve(TodoController);
   const todos = await controller.getAll();

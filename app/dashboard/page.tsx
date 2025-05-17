@@ -4,6 +4,8 @@ import Todos from '@/components/todos/Todos';
 import { cn } from '@/lib/utils';
 import { Card } from '@/components/ui/card';
 
+export const dynamic = 'force-dynamic';
+
 const defaultCards = [
   {
     id: 1,

@@ -3,7 +3,7 @@
 import EditTodoForm from '@/components/todos/EditTodoForm';
 import { Label } from '@/components/ui/label';
 import useFetch from '@hooks/use-fetch';
-import { Todo } from '@prisma/client';
+import { Todo } from '@/domain/todo/Todo';
 import { useParams } from 'next/navigation';
 
 const TodoDetail = () => {
@@ -29,6 +29,7 @@ export default TodoDetail;
 
 import MultipleSelector, { Option } from '@/components/ui/multiple-selector';
 import { useState } from 'react';
+
 
 const OPTIONS: Option[] = [
   { label: 'nextjs', value: 'Nextjs' },
