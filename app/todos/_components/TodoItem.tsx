@@ -17,7 +17,7 @@ const TodoItem = ({ todo }: { todo: TodoDTO }) => {
   const { id, title, completed, totalPomodoros } = todo;
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [editingTitle, setEditingTitle] = useState(false);
-  const [editTotalPmomdoros, setEditTotalPmomdoros] = useState(false);
+  const [editTotalPomodoros, setEditTotalPomodoros] = useState(false);
   const router = useRouter();
 
   return (
@@ -63,17 +63,17 @@ const TodoItem = ({ todo }: { todo: TodoDTO }) => {
               </span>
             )}
 
-            {editTotalPmomdoros ? (
+            {editTotalPomodoros ? (
               <Input
                 id="totalPomodoros"
                 type="number"
                 autoFocus
                 defaultValue={totalPomodoros}
                 className="w-16 border-b-2 border-gray-300 focus:outline-none"
-                onBlur={() => setEditTotalPmomdoros(false)}
+                onBlur={() => setEditTotalPomodoros(false)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
-                    setEditTotalPmomdoros(false);
+                    setEditTotalPomodoros(false);
                     updateTodo(id, {
                       totalPomodoros: Number(e.currentTarget.value),
                     });
@@ -84,7 +84,7 @@ const TodoItem = ({ todo }: { todo: TodoDTO }) => {
             ) : (
               <Badge
                 variant="outline"
-                onClick={() => setEditTotalPmomdoros(true)}
+                onClick={() => setEditTotalPomodoros(true)}
               >
                 {totalPomodoros}
               </Badge>
