@@ -5,8 +5,8 @@
 import '@/infrastructure/di/Container';
 import { container } from 'tsyringe';
 import { api } from './client';
-import { Todo } from '@/domain/todo/Todo';
 import { TodoController } from '@/interface-adapters/controllers/TodoController';
+import { Todo } from '@/domain/todo/Todo';
 
 // ✅ 1. 讀取 Todos
 export const getTodos = async (): Promise<Todo[]> => {
@@ -36,9 +36,7 @@ export const createTodo = async (data: { title: string }): Promise<Todo> => {
 // ✅ 3. 更新 Todo
 export const updateTodo = async (
   id: number,
-  data: Partial<
-    Pick<Todo, 'title' | 'completed' | 'totalPomodoros' | 'completedPomodoros'>
-  >
+  data: Partial<Todo>
 ): Promise<Todo> => {
   try {
     const todoController = container.resolve(TodoController);

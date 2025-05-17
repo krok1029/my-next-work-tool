@@ -2,7 +2,8 @@
 import { z, ZodError } from 'zod';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { Priority } from '@prisma/client';
+import { Priority } from '@/domain/todo/TodoTypes';
+
 
 // Todo 的驗證邏輯
 export const postTodoValidator = z.object({

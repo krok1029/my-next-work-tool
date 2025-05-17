@@ -1,5 +1,5 @@
 import { inject, injectable } from 'tsyringe';
-import { postTodoValidator } from '@/lib/validators';
+import { postTodoValidator, putTodoValidator } from '@/lib/validators';
 import { Todo } from '@/domain/todo/Todo';
 import { TODO, AUTH } from '@/domain/shared/DependencyInjectionTokens';
 import type { AuthService } from '@/domain/auth/AuthService';
@@ -107,7 +107,7 @@ export class TodoController {
   async update(id: number, input: unknown): Promise<Todo> {
     try {
       await this.ensureAuthenticated();
-      const updatedFields = postTodoValidator.parse(input);
+      const updatedFields = putTodoValidator.parse(input);
       const todo = await this.getTodoUseCase.execute(id);
       return await this.updateTodoUseCase.execute(todo, updatedFields);
     } catch (error) {

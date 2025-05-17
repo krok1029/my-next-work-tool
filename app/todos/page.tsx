@@ -1,19 +1,18 @@
-'use client';
-
-import { useState } from 'react';
-import TodoItem from './_components/TodoItem';
-import TodoSheet from '@/components/todos/TodoSheet';
+import '@/infrastructure/di/Container';
+import { container } from 'tsyringe';
+import { TodoController } from '@/interface-adapters/controllers/TodoController';
+import { TodoMapper } from '@/interface-adapters/dto/TodoDTO';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import useFetch from '@hooks/use-fetch';
-import { Todo } from '@prisma/client';
 import { Search } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import TodoItem from './_components/TodoItem';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import NewTodos from '@/components/todos/NewTodos';
 
-export default function Todos() {
-  const { data: todos } = useFetch<Todo[]>('todos');
-  const [isOpen, setIsOpen] = useState(false);
+export default async function Todos() {
+  const controller = container.resolve(TodoController);
+  const todos = await controller.getAll();
+  const todoDTOs = todos.map((todo) => TodoMapper.toDTO(todo));
 
   return (
     <>
@@ -31,10 +30,9 @@ export default function Todos() {
           <CardHeader>Todos List</CardHeader>
           <CardContent>
             <NewTodos />
-            {todos?.map((todo) => <TodoItem key={todo.id} todo={todo} />)}
+            {todoDTOs.map((todo) => <TodoItem key={todo.id} todo={todo} />)}
           </CardContent>
         </Card>
-        <TodoSheet isOpen={false} setIsOpen={() => {}} />
       </main>
     </>
   );

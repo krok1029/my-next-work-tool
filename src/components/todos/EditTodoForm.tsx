@@ -31,12 +31,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { mutate } from 'swr';
 import { toast } from '@hooks/use-toast';
 import { useTodoStore } from '@/lib/zustandStore';
-import { api } from '@/lib/api/client';
 import { TodoDTO } from '@/interface-adapters/dto/TodoDTO';
 import { Priority } from '@/domain/todo/TodoTypes';
+import { updateTodo } from '@/lib/api/todos';
+import { useRouter } from 'next/navigation';
+import { cleanObject } from '@/lib/utils';
 
 const EditTodoForm: React.FC<{ selectedTodo: TodoDTO }> = ({
   selectedTodo,
@@ -45,24 +46,21 @@ const EditTodoForm: React.FC<{ selectedTodo: TodoDTO }> = ({
   const form = useForm<z.infer<typeof putTodoValidator>>({
     resolver: zodResolver(putTodoValidator),
   });
+  const router = useRouter();
   const onSubmit = async (
     id: number,
     data: z.infer<typeof putTodoValidator>
   ) => {
     try {
-      const response = await api.patch(`todos/${id}`, { json: data });
+      await updateTodo(id, data);
 
-      if (response.ok) {
-        clearSelectedTodo();
-        toast({
-          title: 'Todo updated successfully',
-          description: 'Your todo has been updated',
-        });
-        mutate('todos');
-        form.reset();
-      } else {
-        console.error('Failed to update todo');
-      }
+      clearSelectedTodo();
+      toast({
+        title: 'Todo updated successfully',
+        description: 'Your todo has been updated',
+      });
+      router.refresh();
+      form.reset();
     } catch (error) {
       console.error('Error updating todo:', error);
     }
@@ -194,7 +192,9 @@ const EditTodoForm: React.FC<{ selectedTodo: TodoDTO }> = ({
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit((data) => onSubmit(selectedTodo.id, data))}
+        onSubmit={form.handleSubmit((data) =>
+          onSubmit(selectedTodo.id, cleanObject(data))
+        )}
         className="space-y-8 py-4"
       >
         {inputs.map((input) => (
