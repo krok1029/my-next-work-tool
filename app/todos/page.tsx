@@ -34,7 +34,7 @@ export default function Todos() {
             {todos?.map((todo) => <TodoItem key={todo.id} todo={todo} />)}
           </CardContent>
         </Card>
-        <TodoSheet isOpen={isOpen} setIsOpen={setIsOpen} />
+        <TodoSheet isOpen={false} setIsOpen={() => {}} />
       </main>
     </>
   );

@@ -1,5 +1,6 @@
-import { Todo as PrismaTodo, Priority } from '@prisma/client';
+import { Todo as PrismaTodo } from '@prisma/client';
 import { cleanObject } from '@/lib/utils';
+import { Priority } from './TodoTypes';
 
 export interface TodoFilter {
   deadlineToday?: boolean;
@@ -13,7 +14,7 @@ export interface TodoFilter {
 }
 
 export class Todo {
-  public readonly id: number | null;
+  public readonly id: number;
   public readonly userId: string; // ✅ 加上 userId
   public title: string;
   public completed: boolean;
@@ -23,7 +24,7 @@ export class Todo {
   public deadline: string | null;
 
   constructor(params: {
-    id: number | null;
+    id: number;
     userId: string; // ✅ constructor 要有 userId
     title: string;
     completed?: boolean;
@@ -46,19 +47,6 @@ export class Todo {
       : null;
   }
 
-  static fromPrisma(prismaTodo: PrismaTodo) {
-    return new Todo({
-      id: prismaTodo.id,
-      userId: prismaTodo.userId, // ✅ 轉 Prisma 時也要帶 userId
-      title: prismaTodo.title,
-      completed: prismaTodo.completed,
-      totalPomodoros: prismaTodo.totalPomodoros,
-      completedPomodoros: prismaTodo.completedPomodoros,
-      priority: prismaTodo.priority,
-      deadline: prismaTodo.deadline,
-    });
-  }
-
   static createNew(
     userId: string, // ✅ createNew 也要 userId
     title: string,
@@ -70,7 +58,7 @@ export class Todo {
       throw new Error('Title cannot be empty');
     }
     return new Todo({
-      id: null,
+      id: 0,
       userId,
       title: title.trim(),
       totalPomodoros,
@@ -96,7 +84,8 @@ export class Todo {
     }
   }
 
-  update(fields: Partial<Omit<Todo, 'id' | 'userId'>>) { // ✅ userId 不能被 update
+  update(fields: Partial<Omit<Todo, 'id' | 'userId'>>) {
+    // ✅ userId 不能被 update
     const filteredFields = cleanObject(fields);
     Object.assign(this, filteredFields);
   }

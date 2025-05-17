@@ -22,5 +22,5 @@
   "eslint.alwaysShowStatus": true,
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
-  "cSpell.words": ["Pomodoro", "Supabase", "tsyringe"]
+  "cSpell.words": ["Pomodoro", "Pomodoros", "Supabase", "tsyringe"]
 }

@@ -11,6 +11,7 @@ export async function GET() {
     const todos = await todoController.getAll();
     return NextResponse.json(todos);
   } catch (error) {
+    console.error('Error is', error);
     return NextResponse.json(
       {
         message:

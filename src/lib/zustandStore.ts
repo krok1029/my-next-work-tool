@@ -1,10 +1,10 @@
-import { Todo } from '@prisma/client';
+import { TodoDTO } from '@/interface-adapters/dto/TodoDTO';
 import { create } from 'zustand';
 
 type todoState = {
-  selectedTodo: Todo | null;
+  selectedTodo: TodoDTO | null;
   isInProgress: boolean; // 新增進行中的 flag
-  setSelectedTodo: (todo: Todo) => void;
+  setSelectedTodo: (todo: TodoDTO) => void;
   clearSelectedTodo: () => void;
   startProgress: () => void; // 開始進行
   stopProgress: () => void; // 停止進行
@@ -13,7 +13,7 @@ type todoState = {
 export const useTodoStore = create<todoState>((set) => ({
   selectedTodo: null,
   isInProgress: false, // 初始化 flag 為 false
-  setSelectedTodo: (todo: Todo) => set({ selectedTodo: todo }),
+  setSelectedTodo: (todo: TodoDTO) => set({ selectedTodo: todo }),
   clearSelectedTodo: () => set({ selectedTodo: null }),
   startProgress: () => set({ isInProgress: true }), // 設置進行中為 true
   stopProgress: () => set({ isInProgress: false }), // 設置進行中為 false

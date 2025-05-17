@@ -9,17 +9,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-
+import { TodoDTO } from '@/interface-adapters/dto/TodoDTO';
 import { deleteTodo } from '@/lib/api/todos';
 import { mutate } from 'swr';
-import { Todo } from '@prisma/client';
 
 const DeleteDialog = ({
   todo,
   open,
   setOpen,
 }: {
-  todo: Todo;
+  todo: TodoDTO;
   open: boolean;
   setOpen: (open: boolean) => void;
 }) => {

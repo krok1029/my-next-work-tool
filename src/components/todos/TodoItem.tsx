@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Todo } from '@prisma/client';
+
 import { EllipsisVertical } from 'lucide-react';
 import {
   DropdownMenu,
@@ -15,12 +15,13 @@ import clsx from 'clsx';
 import { cn } from '@/lib/utils';
 import { useTodoStore } from '@/lib/zustandStore';
 import DeleteDialog from '@/components/todos/DeleteDialog';
+import { TodoDTO } from '@/interface-adapters/dto/TodoDTO';
 
 const TodoItem = ({
   todo,
   setIsOpen,
 }: {
-  todo: Todo;
+  todo: TodoDTO;
   setIsOpen: (open: boolean) => void;
 }) => {
   const { title, completed, totalPomodoros, completedPomodoros } = todo;

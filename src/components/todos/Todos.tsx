@@ -1,28 +1,17 @@
-'use client';
+import '@/infrastructure/di/Container';
+import { container } from 'tsyringe';
+import { TodoController } from '@/interface-adapters/controllers/TodoController';
+import TodosClient from './TodosClient';
+import { TodoMapper } from '@/interface-adapters/dto/TodoDTO';
 
-import NewTodos from './NewTodos';
-import TodoItem from './TodoItem';
-import { Todo } from '@prisma/client';
-import useFetch from '@hooks/use-fetch';
-import TodoSheet from '@/components/todos/TodoSheet';
-import { useState } from 'react';
+const Todos = async () => {
+  const controller = container.resolve(TodoController);
+  const todos = await controller.getAll();
+  const todoDTOs = todos.map((todo) => TodoMapper.toDTO(todo));
 
-const Todos = () => {
-  const { data: todos, error, isLoading } = useFetch<Todo[]>('todos');
-  const [isOpen, setIsOpen] = useState(false);
-
-  if (isLoading) return;
-
-  if (error) return <p className="text-red-500">Error fetching todos</p>;
   return (
     <div className="p-4">
-      <NewTodos />
-      <div className="max-h-72 overflow-y-auto">
-        {todos?.map((todo) => (
-          <TodoItem key={todo.id} todo={todo} setIsOpen={setIsOpen} />
-        ))}
-      </div>
-      <TodoSheet isOpen={isOpen} setIsOpen={setIsOpen} />
+      <TodosClient initialTodos={todoDTOs} />
     </div>
   );
 };

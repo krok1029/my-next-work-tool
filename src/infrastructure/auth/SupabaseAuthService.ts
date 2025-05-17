@@ -1,6 +1,10 @@
+// src/infrastructure/auth/SupabaseAuthService.ts
+
+import 'server-only';
 import { AuthService, AuthResult } from '@/domain/auth/AuthService';
-import { createClient } from '@/lib/supabaseClient';
+import { createClientFromCookies } from '@/lib/supabaseClient';
 import { injectable } from 'tsyringe';
+import { cookies } from 'next/headers';
 
 @injectable()
 export class SupabaseAuthService implements AuthService {
@@ -9,7 +13,8 @@ export class SupabaseAuthService implements AuthService {
     password: string
   ): Promise<AuthResult<{ userId: string }>> {
     try {
-      const supabase = createClient();
+      console.log('signin');
+      const supabase = createClientFromCookies(cookies());
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -28,8 +33,12 @@ export class SupabaseAuthService implements AuthService {
     password: string
   ): Promise<AuthResult<{ userId: string }>> {
     try {
-      const supabase = createClient();
-      const { data, error } = await supabase.auth.signUp({ email, password });
+      console.log('signup');
+      const supabase = createClientFromCookies(cookies());
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
       if (error) {
         return { success: false, error };
       }
@@ -39,15 +48,15 @@ export class SupabaseAuthService implements AuthService {
     }
   }
 
-  async getSession(): Promise<
-    AuthResult<{ userId: string; expiresAt?: Date } | null>
-  > {
-    const supabase = createClient();
+  async getSession(
+    supabase = createClientFromCookies(cookies())
+  ): Promise<AuthResult<{ userId: string; expiresAt?: Date } | null>> {
     try {
       const { data } = await supabase.auth.getUser();
       const { user } = data;
 
       if (!user) {
+        console.log('No user found');
         return { success: true, data: null };
       }
 
@@ -64,8 +73,10 @@ export class SupabaseAuthService implements AuthService {
 
   async signOut(): Promise<AuthResult<void>> {
     try {
-      const supabase = createClient();
+      console.log('signOut');
+      const supabase = createClientFromCookies(cookies());
       await supabase.auth.signOut();
+      console.log('Signing out');
       return { success: true };
     } catch (error) {
       return { success: false, error: error as Error };

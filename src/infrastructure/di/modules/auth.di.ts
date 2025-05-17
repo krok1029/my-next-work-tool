@@ -7,10 +7,13 @@ import { AuthController } from '@/interface-adapters/controllers/AuthController'
 import { SignInUserUseCase } from '@/application/auth/SignInUserUseCase';
 import { SignOutUserUseCase } from '@/application/auth/SignOutUserUseCase';
 import { SignUpUserUseCase } from '@/application/auth/SignUpUserUseCase';
+import { AuthService } from '@/domain/auth/AuthService';
 
 export function registerAuthModule() {
   if (!container.isRegistered(AUTH.Service)) {
-    container.registerSingleton(AUTH.Service, SupabaseAuthService);
+    container.register<AuthService>(AUTH.Service, {
+      useFactory: () => new SupabaseAuthService(),
+    });
   }
 
   if (!container.isRegistered(AUTH.CheckSessionUseCase)) {
