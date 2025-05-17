@@ -10,12 +10,12 @@ import { AuthController } from '@/interface-adapters/controllers/AuthController'
 import { AuthenticationError } from '@/domain/shared/Error';
 
 const defaultCards = [
-  // {
-  //   id: 1,
-  //   text: 'CountdownTimer',
-  //   className: '',
-  //   element: <CountdownTimer />,
-  // },
+  {
+    id: 1,
+    text: 'CountdownTimer',
+    className: '',
+    element: <CountdownTimer />,
+  },
   { id: 2, text: 'Todos', className: 'col-span-2', element: <Todos /> },
 ];
 
