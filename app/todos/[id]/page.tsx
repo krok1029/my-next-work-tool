@@ -13,14 +13,20 @@ const TodoDetail = () => {
     return <div>Loading...</div>;
   }
   return (
-    <div className="flex h-full flex-row items-center justify-center gap-x-2">
+    <div className="flex h-full flex-col divide-y md:flex-row md:gap-x-8 md:divide-y-0">
       <div className="flex-1">
         <EditTodoForm selectedTodo={todo} />
       </div>
-      <div className="flex flex-1 flex-col gap-y-2">
-        <Label>Label</Label>
-        <MultipleSelectorWithAsyncSearchAndCreatable />
-        <Label>Subtask</Label>
+      <div className="flex-1 py-4">
+        <div className="space-y-8">
+          <div className="space-y-2">
+            <Label>Label</Label>
+            <MultipleSelectorWithAsyncSearchAndCreatable />
+          </div>
+          <div>
+            <Label>Subtask</Label>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -29,7 +35,6 @@ export default TodoDetail;
 
 import MultipleSelector, { Option } from '@/components/ui/multiple-selector';
 import { useState } from 'react';
-
 
 const OPTIONS: Option[] = [
   { label: 'nextjs', value: 'Nextjs' },
@@ -58,7 +63,7 @@ const MultipleSelectorWithAsyncSearchAndCreatable = () => {
   const [_isTrigger, setIsTriggered] = useState(false);
 
   return (
-    <div className="flex w-full flex-col gap-5 px-10">
+    <div className="my-2 flex w-full flex-col gap-5">
       <MultipleSelector
         onSearch={async (value) => {
           setIsTriggered(true);
