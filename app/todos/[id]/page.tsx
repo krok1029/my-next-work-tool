@@ -76,7 +76,7 @@ const MultipleSelectorWithAsyncSearchAndCreatable = () => {
         // }}
         defaultOptions={[]}
         creatable={true}
-        placeholder="trying to search 'a' to get more options..."
+        placeholder="trying to search options..."
         loadingIndicator={
           <p className="py-2 text-center text-lg leading-10 text-muted-foreground">
             loading...
