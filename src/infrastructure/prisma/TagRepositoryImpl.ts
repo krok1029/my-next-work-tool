@@ -74,6 +74,21 @@ export class PrismaTagRepository implements TagRepository {
     return tags.map((tag) => this.mapPrismaTagToDomain(tag));
   }
 
+  async findByKeyword(keyword: string): Promise<Tag[]> {
+    const tags = await prisma.tag.findMany({
+      where: {
+        name: {
+          contains: keyword,
+          mode: 'insensitive', // 不区分大小写
+        },
+      },
+      orderBy: {
+        name: 'asc',
+      },
+    });
+    return tags.map((tag) => this.mapPrismaTagToDomain(tag));
+  }
+
   async update(tag: Tag): Promise<Tag> {
     if (tag.id === null) {
       throw new Error('Cannot update a Todo without an ID');

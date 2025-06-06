@@ -8,6 +8,7 @@ import type { GetAllTagUseCase } from '@/application/tag/GetAllTagUseCase';
 import type { UpdateTagUseCase } from '@/application/tag/UpdateTagUseCase';
 import type { GetTagUseCase } from '@/application/tag/GetTagUseCase';
 import type { DeleteTagUseCase } from '@/application/tag/DeleteTagUseCase';
+import type { SearchTagsUseCase } from '@/application/tag/SearchTagsUseCase';
 import { AuthenticationError, NotFoundError } from '@/domain/shared/Error';
 import { ZodError } from 'zod';
 import { postTagValidator, putTagValidator } from '@/lib/validators';
@@ -25,7 +26,9 @@ export class TagController {
     @inject(TAG.UpdateTagUseCase)
     private readonly updateTagUseCase: UpdateTagUseCase,
     @inject(TAG.DeleteTagUseCase)
-    private readonly deleteTagUseCase: DeleteTagUseCase
+    private readonly deleteTagUseCase: DeleteTagUseCase,
+    @inject(TAG.SearchTagsUseCase)
+    private readonly searchTagsUseCase: SearchTagsUseCase
   ) {}
 
   /**
@@ -81,6 +84,10 @@ export class TagController {
     } catch (error) {
       this.handleError(error, 'Failed to fetch tag');
     }
+  }
+
+  async searchByKeyword(keyword: string): Promise<Tag[]> {
+    return this.searchTagsUseCase.execute(keyword);
   }
 
   /**

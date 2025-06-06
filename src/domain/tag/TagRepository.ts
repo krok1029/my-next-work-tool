@@ -9,6 +9,7 @@ export interface TagRepository {
     targetType: TagTargetType,
     targetId: string
   ): Promise<Tag[]>;
+  findByKeyword(keyword: string): Promise<Tag[]>;
   update(tag: Partial<Tag>): Promise<Tag>;
   delete(id: number): Promise<void>;
   findAll(): Promise<Tag[]>;

@@ -64,3 +64,14 @@ export const deleteTag = async (id: number): Promise<boolean> => {
     return false;
   }
 };
+
+export const searchTags = async (keyword: string): Promise<Tag[]> => {
+  try {
+    const tagController = container.resolve(TagController);
+    const tags = await tagController.searchByKeyword(keyword);
+    return JSON.parse(JSON.stringify(tags));
+  } catch (error) {
+    console.error('Error searching tags:', error);
+    throw error;
+  }
+}

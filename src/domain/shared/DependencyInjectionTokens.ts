@@ -1,5 +1,7 @@
 // src/domain/shared/DependencyInjectionTokens.ts
 
+import { Search } from "lucide-react";
+
 export const AUTH = {
   Service: 'AuthService',
   Controller: 'AuthController',
@@ -31,5 +33,6 @@ export const TAG = {
   UpdateTagUseCase: 'UpdateTagUseCase',
   DeleteTagUseCase: 'DeleteTagUseCase',
   GetAllTagUseCase: 'GetAllTagUseCase',
+  SearchTagsUseCase: 'SearchTagsUseCase',
   Controller: 'TagController'
 }

@@ -9,6 +9,7 @@ import { GetAllTagUseCase } from '@/application/tag/GetAllTagUseCase';
 import { GetTagUseCase } from '@/application/tag/GetTagUseCase';
 import { UpdateTagUseCase } from '@/application/tag/UpdateTagUseCase';
 import { DeleteTagUseCase } from '@/application/tag/DeleteTagUseCase';
+import { SearchTagsUseCase } from '@/application/tag/SearchTagsUseCase';
 
 export function registerTagModule() {
   if (!container.isRegistered(TAG.Repo)) {
@@ -43,5 +44,8 @@ export function registerTagModule() {
 
   if (!container.isRegistered(TAG.DeleteTagUseCase)) {
     container.registerSingleton(TAG.DeleteTagUseCase, DeleteTagUseCase);
+  }
+  if (!container.isRegistered(TAG.SearchTagsUseCase)) {
+    container.registerSingleton(TAG.SearchTagsUseCase, SearchTagsUseCase);
   }
 }

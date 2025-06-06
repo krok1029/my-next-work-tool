@@ -23,9 +23,6 @@ const TodoDetail = () => {
             <Label>Label</Label>
             <MultipleSelectorWithAsyncSearchAndCreatable />
           </div>
-          <div>
-            <Label>Subtask</Label>
-          </div>
         </div>
       </div>
     </div>
@@ -35,7 +32,7 @@ export default TodoDetail;
 
 import MultipleSelector, { Option } from '@/components/ui/multiple-selector';
 import { useState } from 'react';
-import { createTag, getTags } from '@/lib/api/tag';
+import { createTag, getTags, searchTags } from '@/lib/api/tag';
 import { TagTargetType } from '@/domain/tag/TagTypes';
 
 const MultipleSelectorWithAsyncSearchAndCreatable = () => {
@@ -46,9 +43,9 @@ const MultipleSelectorWithAsyncSearchAndCreatable = () => {
   return (
     <div className="my-2 flex w-full flex-col gap-5">
       <MultipleSelector
-        onSearch={async () => {
+        onSearch={async (e) => {
           setIsTriggered(true);
-          const res = await getTags();
+          const res = await searchTags(e);
           setIsTriggered(false);
           const options = res.map((tag) => ({
             value: tag.name,
@@ -56,6 +53,7 @@ const MultipleSelectorWithAsyncSearchAndCreatable = () => {
           }));
           return options;
         }}
+        triggerSearchOnFocus={true}
         value={value}
         onChange={(value) => {
           setValue(value);
@@ -67,9 +65,8 @@ const MultipleSelectorWithAsyncSearchAndCreatable = () => {
             targetId: id as string,
           });
         }}
-        defaultOptions={[]}
         creatable={true}
-        placeholder="trying to search options..."
+        placeholder={value.length ? '' : 'trying to search options...'}
         loadingIndicator={
           <p className="py-2 text-center text-lg leading-10 text-muted-foreground">
             loading...
@@ -81,13 +78,6 @@ const MultipleSelectorWithAsyncSearchAndCreatable = () => {
           </p>
         }
       />
-      <button
-        onClick={() => {
-          console.log('baleu', value.map((b) => b.value).join(','));
-        }}
-      >
-        CHECK
-      </button>
     </div>
   );
 };
