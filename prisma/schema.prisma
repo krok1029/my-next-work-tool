@@ -45,6 +45,9 @@ enum TagTargetType {
   USER
 }
 
+
+// TODO: 這邊應該拆開 成 TodoTag 和 UserTag 兩個模型，分別關聯 Todo 和 User
+// 目前這樣會無法在同一個 Todo 上使用多個標籤
 model Tag {
   id          Int            @id @default(autoincrement())
   name        String

@@ -32,8 +32,9 @@ export default TodoDetail;
 
 import MultipleSelector, { Option } from '@/components/ui/multiple-selector';
 import { useState } from 'react';
-import { createTag, getTags, searchTags } from '@/lib/api/tag';
+import { createTag, getTags, searchTags, updateTag } from '@/lib/api/tag';
 import { TagTargetType } from '@/domain/tag/TagTypes';
+import { Button } from '@/components/ui/button';
 
 const MultipleSelectorWithAsyncSearchAndCreatable = () => {
   const [_isTrigger, setIsTriggered] = useState(false);
@@ -78,6 +79,22 @@ const MultipleSelectorWithAsyncSearchAndCreatable = () => {
           </p>
         }
       />
+      <div className="flex items-center justify-end">
+        <Button
+          size="sm"
+          onClick={() => {
+            value.forEach((option) => {
+              updateTag(Number(id), {
+                name: option.value,
+                targetType: TagTargetType.TODO,
+                targetId: id as string,
+              });
+            });
+          }}
+        >
+          Submit
+        </Button>
+      </div>
     </div>
   );
 };
