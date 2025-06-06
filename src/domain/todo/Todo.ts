@@ -14,7 +14,7 @@ export interface TodoFilter {
 
 export class Todo {
   public readonly id: number;
-  public readonly userId: string; // ✅ 加上 userId
+  public readonly userId: string;
   public title: string;
   public completed: boolean;
   public totalPomodoros: number;
@@ -24,7 +24,7 @@ export class Todo {
 
   constructor(params: {
     id: number;
-    userId: string; // ✅ constructor 要有 userId
+    userId: string;
     title: string;
     completed?: boolean;
     totalPomodoros?: number;
@@ -33,7 +33,7 @@ export class Todo {
     deadline?: Date | string | null;
   }) {
     this.id = params.id;
-    this.userId = params.userId; // ✅
+    this.userId = params.userId;
     this.title = params.title;
     this.completed = params.completed ?? false;
     this.totalPomodoros = params.totalPomodoros ?? 1;
@@ -47,7 +47,7 @@ export class Todo {
   }
 
   static createNew(
-    userId: string, // ✅ createNew 也要 userId
+    userId: string,
     title: string,
     totalPomodoros: number = 1,
     priority: Priority = Priority.MEDIUM,

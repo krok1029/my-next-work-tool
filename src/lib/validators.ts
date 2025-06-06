@@ -3,7 +3,7 @@ import { z, ZodError } from 'zod';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { Priority } from '@/domain/todo/TodoTypes';
-
+import { TagTargetType } from '@/domain/tag/TagTypes';
 
 // Todo 的驗證邏輯
 export const postTodoValidator = z.object({
@@ -55,6 +55,19 @@ export const signUpSchema = z
     message: "Passwords don't match",
     path: ['confirmPassword'], // 指定錯誤訊息應該顯示在哪個欄位
   });
+
+export const postTagValidator = z.object({
+  name: z.string().min(1, { message: "Tag name can't be empty" }),
+  targetType: z.enum([TagTargetType.TODO, TagTargetType.USER]),
+  targetId: z.string(),
+});
+
+export const putTagValidator = z.object({
+  name: z.string().min(1, { message: "Tag name can't be empty" }),
+  tagTargetType: z.enum([TagTargetType.TODO, TagTargetType.USER]).optional(),
+  targetId: z.number().optional(),
+  id: z.number().int().positive({ message: 'ID must be a positive integer' }),
+});
 
 export function validatePayload<T>(schema: z.ZodType<T>) {
   return async (req: NextRequest): Promise<T> => {

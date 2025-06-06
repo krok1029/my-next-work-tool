@@ -35,45 +35,38 @@ export default TodoDetail;
 
 import MultipleSelector, { Option } from '@/components/ui/multiple-selector';
 import { useState } from 'react';
-
-const OPTIONS: Option[] = [
-  { label: 'nextjs', value: 'Nextjs' },
-  { label: 'React', value: 'react' },
-  { label: 'Remix', value: 'remix' },
-  { label: 'Vite', value: 'vite' },
-  { label: 'Nuxt', value: 'nuxt' },
-  { label: 'Vue', value: 'vue' },
-  { label: 'Svelte', value: 'svelte' },
-  { label: 'Angular', value: 'angular' },
-  { label: 'Ember', value: 'ember' },
-  { label: 'Gatsby', value: 'gatsby' },
-  { label: 'Astro', value: 'astro' },
-];
-
-const mockSearch = async (value: string): Promise<Option[]> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const res = OPTIONS.filter((option) => option.value.includes(value));
-      resolve(res);
-    }, 1000);
-  });
-};
+import { createTag, getTags } from '@/lib/api/tag';
+import { TagTargetType } from '@/domain/tag/TagTypes';
 
 const MultipleSelectorWithAsyncSearchAndCreatable = () => {
   const [_isTrigger, setIsTriggered] = useState(false);
+  const [value, setValue] = useState<Option[]>([]);
+  const { id } = useParams();
 
   return (
     <div className="my-2 flex w-full flex-col gap-5">
       <MultipleSelector
-        onSearch={async (value) => {
+        onSearch={async () => {
           setIsTriggered(true);
-          const res = await mockSearch(value);
+          const res = await getTags();
           setIsTriggered(false);
-          return res;
+          const options = res.map((tag) => ({
+            value: tag.name,
+            label: tag.name,
+          }));
+          return options;
         }}
-        // onChange={(value) => {
-        //   console.log(value);
-        // }}
+        value={value}
+        onChange={(value) => {
+          setValue(value);
+        }}
+        onCreate={async (value) => {
+          await createTag({
+            name: value.value,
+            targetType: TagTargetType.TODO,
+            targetId: id as string,
+          });
+        }}
         defaultOptions={[]}
         creatable={true}
         placeholder="trying to search options..."
@@ -88,6 +81,13 @@ const MultipleSelectorWithAsyncSearchAndCreatable = () => {
           </p>
         }
       />
+      <button
+        onClick={() => {
+          console.log('baleu', value.map((b) => b.value).join(','));
+        }}
+      >
+        CHECK
+      </button>
     </div>
   );
 };

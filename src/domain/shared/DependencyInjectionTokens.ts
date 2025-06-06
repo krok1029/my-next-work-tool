@@ -23,3 +23,13 @@ export const USER = {
   CreateUserUseCase: 'CreateUserUseCase',
   GetUserUseCase: 'GetUserUseCase',
 } as const;
+
+export const TAG = {
+  Repo: 'TagRepository',
+  CreateTagUseCase: 'CreateTagUseCase',
+  GetTagUseCase: 'GetTagUseCase',
+  UpdateTagUseCase: 'UpdateTagUseCase',
+  DeleteTagUseCase: 'DeleteTagUseCase',
+  GetAllTagUseCase: 'GetAllTagUseCase',
+  Controller: 'TagController'
+}

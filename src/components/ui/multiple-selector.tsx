@@ -77,6 +77,8 @@ interface MultipleSelectorProps {
   >;
   /** hide the clear all button. */
   hideClearAllButton?: boolean;
+  /** click create Item**/
+  onCreate?: (option: Option) => Promise<void>;
 }
 
 export interface MultipleSelectorRef {
@@ -171,6 +173,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
     {
       value,
       onChange,
+      onCreate,
       placeholder,
       defaultOptions: arrayDefaultOptions = [],
       options: arrayOptions,
@@ -361,7 +364,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
             e.preventDefault();
             e.stopPropagation();
           }}
-          onSelect={(value: string) => {
+          onSelect={async(value: string) => {
             if (selected.length >= maxSelected) {
               onMaxSelected?.(selected.length);
               return;
@@ -369,6 +372,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
             setInputValue('');
             const newOptions = [...selected, { value, label: value }];
             setSelected(newOptions);
+            await onCreate?.({ value, label: value });
             onChange?.(newOptions);
           }}
         >
